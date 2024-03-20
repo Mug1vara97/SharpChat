@@ -1,0 +1,20 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Введите логин</title>
+</head>
+<body>
+    <div>
+        Введите логин:<br />
+        <input id="userName" type="text" /><br /><br />
+        <input type="button" id="submitBtn" value="Отправить" />
+    </div>
+    <script>
+        document.getElementById("submitBtn").addEventListener("click", function () {
+            var userName = document.getElementById("userName").value;
+            window.location.href = "/Home/Index?userName=" + userName;
+        });
+    </script>
+</body>
+</html>
