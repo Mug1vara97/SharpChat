@@ -6,7 +6,8 @@ namespace SignalRApp
     {
         public async Task Send(string message, string username)
         {
-            await Clients.All.SendAsync("Receive", message, username);
+            var time = DateTime.Now.ToString("HH:mm:ss");
+            await Clients.All.SendAsync("Receive", message, username, time);
         }
     }
 }

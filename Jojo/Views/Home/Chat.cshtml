@@ -8,10 +8,11 @@
     <title>Chat</title>
 </head>
 <body>
-    <div> Ваш логин: <strong>@ViewBag.Username</strong> <br /><br />
-        Введите сообщение:<br /> 
+    <div>
+        Ваш логин: <strong>@ViewBag.Username</strong> <br /><br />
+        Введите сообщение:<br />
         <input type="text" id="message" /><br /><br />
-        <input type="button" id="sendBtn" value="Отправить" disabled="disabled" /> 
+        <input type="button" id="sendBtn" value="Отправить" disabled="disabled" />
     </div>
     <div id="chatroom"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
@@ -32,16 +33,24 @@
                 });
         });
 
-        hubConnection.on("Receive", function (message, username) {
+        hubConnection.on("Receive", function (message, username, time) {
+            const messageElem = document.createElement("p");
+
             const usernameElem = document.createElement("b");
             usernameElem.textContent = username + ": ";
 
-            const elem = document.createElement("p");
-            elem.appendChild(usernameElem);
-            elem.appendChild(document.createTextNode(message));
+            const messageTextElem = document.createElement("span");
+            messageTextElem.textContent = message + "|";
 
-            const firstElem = document.getElementById("chatroom").firstChild;
-            document.getElementById("chatroom").insertBefore(elem, firstElem);
+            const timeElem = document.createElement("span");
+            timeElem.textContent = time + " ";
+
+            messageElem.appendChild(usernameElem);
+            messageElem.appendChild(messageTextElem);
+            messageElem.appendChild(timeElem);
+
+            const chatroom = document.getElementById("chatroom");
+            chatroom.appendChild(messageElem);
         });
 
         hubConnection.start()
