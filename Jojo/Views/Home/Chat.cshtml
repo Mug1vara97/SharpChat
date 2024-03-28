@@ -59,7 +59,7 @@
 
         document.getElementById("sendBtn").addEventListener("click", function () {
             const message = document.getElementById("message").value;
-            const chatId = @ViewBag.ChatId; // Передать правильный ChatId
+            const chatId = @ViewBag.ChatId;
 
             if (message.trim() !== "") {
                 hubConnection.invoke("Send", message, username, chatId)

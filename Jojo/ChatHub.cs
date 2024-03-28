@@ -28,6 +28,7 @@ namespace SignalRApp
 
                 await Clients.All.SendAsync("Receive", message, username, time.ToString("HH:mm"));
             }
+
         }
         public async Task GetChatMessages(int chatId)
         {

@@ -36,6 +36,10 @@ namespace Jojo.Controllers
         public IActionResult ChatList(string username)
         {
             ViewBag.Username = username;
+
+            var chats = _context.Chats.ToList();
+            ViewBag.Chats = chats;
+
             return View();
         }
 
