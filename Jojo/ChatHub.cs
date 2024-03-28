@@ -26,7 +26,7 @@ namespace SignalRApp
 
                 await _context.SaveChangesAsync();
 
-                await Clients.All.SendAsync("Receive", message, username, time.ToString("HH:mm"));
+                await Clients.Group(chatId.ToString()).SendAsync("Receive", message, username, time.ToString("HH:mm"));
             }
 
         }
@@ -37,6 +37,10 @@ namespace SignalRApp
             {
                 await Clients.Caller.SendAsync("Receive", message.Message, message.Username, message.Time.ToString("HH:mm"));
             }
+        }
+        public async Task JoinChatGroup(int chatId)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, chatId.ToString());
         }
 
 

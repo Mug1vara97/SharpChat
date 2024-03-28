@@ -36,7 +36,7 @@
 </head>
 <body>
     <div>
-        <h1>Welcome, @ViewBag.Username! Chat @ViewBag.ChatId</h1>
+        <h1>Chat @ViewBag.ChatId</h1>
         Введите сообщение:<br />
         <input type="text" id="message" /><br /><br />
         <input type="button" id="sendBtn" value="Отправить" disabled="disabled" />
@@ -110,10 +110,13 @@
             .then(function () {
                 document.getElementById("sendBtn").disabled = false;
                 hubConnection.invoke("GetChatMessages", @ViewBag.ChatId);
+
+                hubConnection.invoke("JoinChatGroup", @ViewBag.ChatId);
             })
             .catch(function (err) {
                 return console.error(err.toString());
             });
+
     </script>
 </body>
 </html>
