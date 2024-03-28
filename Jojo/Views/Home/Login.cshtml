@@ -15,7 +15,7 @@
         document.getElementById('loginBtn').addEventListener('click', function () { 
             var username = document.getElementById('username').value;
             sessionStorage.setItem('username', username);
-            window.location.href = '/Home/Chat?username=' + username; 
+            window.location.href = '/Home/ChatList?username=' + username; 
         });
         </script>
 </body>

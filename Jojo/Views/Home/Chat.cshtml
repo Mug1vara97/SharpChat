@@ -6,16 +6,44 @@
 <head>
     <meta charset="utf-8" />
     <title>Chat</title>
+    <style>
+        .message {
+            background-color: #DCF8C6;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .username {
+            font-weight: bold;
+            color: #0084ff;
+        }
+
+        .time {
+            color: #666;
+            font-size: 0.8em;
+        }
+
+        .other-message {
+            background-color: #f2f2f2;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+    </style>
+
 </head>
 <body>
     <div>
-        Ваш логин: <strong>@ViewBag.Username</strong> <br /><br />
+        <h1>Welcome, @ViewBag.Username! Chat @ViewBag.ChatId</h1>
         Введите сообщение:<br />
         <input type="text" id="message" /><br /><br />
         <input type="button" id="sendBtn" value="Отправить" disabled="disabled" />
     </div>
     <div id="chatroom"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+
     <script>
         const username = '@ViewBag.Username';
 
@@ -23,30 +51,55 @@
             .withUrl("/chat")
             .build();
 
-        document.getElementById("sendBtn").addEventListener("click", function () {
-            const message = document.getElementById("message").value;
-
-            // Send the message to the server
-            hubConnection.invoke("Send", message, username)
-                .catch(function (err) {
-                    return console.error(err.toString());
-                });
+        document.getElementById("message").addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+                document.getElementById("sendBtn").click();
+            }
         });
 
-        hubConnection.on("Receive", function (message, username, time) {
-            const messageElem = document.createElement("p");
+        document.getElementById("sendBtn").addEventListener("click", function () {
+            const message = document.getElementById("message").value;
+            const chatId = @ViewBag.ChatId; // Передать правильный ChatId
 
-            const usernameElem = document.createElement("b");
-            usernameElem.textContent = username + ": ";
+            if (message.trim() !== "") {
+                hubConnection.invoke("Send", message, username, chatId)
+                    .then(function () {
+                        document.getElementById("message").value = "";
+                    })
+                    .catch(function (err) {
+                        return console.error(err.toString());
+                    });
+            }
+        });
+
+
+        hubConnection.on("Receive", function (message, username, time) {
+            const messageElem = document.createElement("div");
+            if (username !== '@ViewBag.Username') {
+                messageElem.classList.add("other-message");
+            } else {
+                messageElem.classList.add("message");
+            }
+
+            const usernameElem = document.createElement("span");
+            usernameElem.classList.add("username");
+            usernameElem.textContent = username;
+
+            const br1 = document.createElement("br");
 
             const messageTextElem = document.createElement("span");
-            messageTextElem.textContent = message + "|";
+            messageTextElem.textContent = message;
+
+            const br2 = document.createElement("br");
 
             const timeElem = document.createElement("span");
-            timeElem.textContent = time + " ";
+            timeElem.classList.add("time");
+            timeElem.textContent = time;
 
             messageElem.appendChild(usernameElem);
+            messageElem.appendChild(br1);
             messageElem.appendChild(messageTextElem);
+            messageElem.appendChild(br2);
             messageElem.appendChild(timeElem);
 
             const chatroom = document.getElementById("chatroom");
@@ -56,6 +109,7 @@
         hubConnection.start()
             .then(function () {
                 document.getElementById("sendBtn").disabled = false;
+                hubConnection.invoke("GetChatMessages", @ViewBag.ChatId);
             })
             .catch(function (err) {
                 return console.error(err.toString());

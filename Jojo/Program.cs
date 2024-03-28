@@ -1,10 +1,14 @@
+using Jojo.Models;
+using Microsoft.EntityFrameworkCore;
 using SignalRApp;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseNpgsql("Server=localhost; Database=Chat; User Id=postgres; Password=1000-7;"));
+
 builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
-
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
