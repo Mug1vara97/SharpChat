@@ -159,11 +159,8 @@ namespace Jojo.Controllers
                     byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                     string hashedPassword = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
 
-                    // Сравнение хэшированного пароля в базе данных с введенным пользователем
                     if (user.Password == hashedPassword)
                     {
-                        // Успешная авторизация
-                        // Создание сессии или куки для пользователя
                         return RedirectToAction("ChatList", new { username = user.Username });
                     }
                 }
