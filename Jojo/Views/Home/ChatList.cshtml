@@ -64,6 +64,8 @@
             padding: 20px;
             border: 1px solid #ccc;
             z-index: 9999;
+            width: 400px; 
+            height: 300px;
         }
 
         .dark-mode {
@@ -71,7 +73,20 @@
             color: #fff;
         }
 
+        .li {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            margin: 5px;
+            padding: 10px;
+        }
+
+            .lip {
+                word-wrap: break-word;
+            }
+
+
     </style>
+    <link rel="stylesheet" href="~/css/theme.css">
 </head>
 <body>
     <button onclick="openCreateChatModal()">Create Chat</button>
@@ -84,17 +99,17 @@
             <label for="chatDescription">Chat Description:</label>
             <input type="text" id="chatDescription" name="chatDescription" />
             <input type="hidden" id="username" name="username" value="@ViewBag.Username" />
-            <input type="submit" value="Create Chat" />
         </form>
+        <button onclick="openCreateChatModal()">Create Chat</button>
     </div>
     <button class="button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
 
     <ul>
         @foreach (var chat in ViewBag.Chats)
         {
-            <li>
+            <li class="li">
                 <a class="chat-button" href="/Home/Chat?username=@ViewBag.Username&chatId=@chat.Id">@chat.Name</a>
-                <p>@chat.Description</p>
+                <p class=" lip">@chat.Description</p>
                 @if (chat.CreatedBy == ViewBag.Username)
                 {
                     <form method="post" action="/Home/DeleteChat">
@@ -107,6 +122,7 @@
         }
 
     </ul>
+    <script src="~/js/theme.js"></script>
     <script>
         function openCreateChatModal() {
             document.getElementById('createChatModal').style.display = 'block';
@@ -134,10 +150,6 @@
             document.getElementById('createChatModal').style.display = 'none';
         });
 
-        function toggleDarkMode() {
-            const body = document.querySelector("body");
-            body.classList.toggle("dark-mode");
-        }
         document.addEventListener('keydown', function(event) {
     if (event.key === "Escape") {
         document.getElementById('createChatModal').style.display = 'none';

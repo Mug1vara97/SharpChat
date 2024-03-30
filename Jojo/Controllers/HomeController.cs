@@ -73,20 +73,20 @@ namespace Jojo.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult CreateChat(string chatName, string chatDescription, string username)
+        public async Task<IActionResult> CreateChat(string chatName, string chatDescription, string username)
         {
             if (!string.IsNullOrEmpty(chatName) && !string.IsNullOrEmpty(username))
             {
                 var newChat = new Chat { Name = chatName, Description = chatDescription, CreatedBy = username };
                 _context.Chats.Add(newChat);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync(); _context.SaveChanges();
             }
 
             return RedirectToAction("ChatList", new { username });
         }
 
         [HttpPost]
-        public IActionResult DeleteChat(string username, int chatId)
+        public async Task<IActionResult> DeleteChat(string username, int chatId)
         {
             var chat = _context.Chats.Find(chatId);
 
@@ -95,7 +95,7 @@ namespace Jojo.Controllers
                 if (chat.CreatedBy == username)
                 {
                     _context.Chats.Remove(chat);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                 }
             }
 
@@ -117,7 +117,7 @@ namespace Jojo.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(User user, string confirmPassword)
+       public async Task<IActionResult> Register(User user, string confirmPassword)
         {
             if (ModelState.IsValid)
             {
@@ -135,7 +135,7 @@ namespace Jojo.Controllers
                         user.Password = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
                     }
                     _context.Users.Add(user);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
 
                     return RedirectToAction("Login");
                 }

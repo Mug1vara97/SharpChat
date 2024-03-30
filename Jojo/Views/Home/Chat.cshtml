@@ -73,20 +73,40 @@
             overflow-y: auto;
         }
 
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left; 
+        }
+
+        .back-button {
+
+        }
+
+        .name {
+            margin-right: 30px;
+        }
+
 
     </style>
-
+    <link rel="stylesheet" href="~/css/theme.css">
 </head>
 <body>
-    <h1>Chat @ViewBag.ChatName</h1>
-    <a href="/Home/ChatList?username=@ViewBag.Username">Назад к списку чатов</a>
+    <div class="chat-header">
+        <form method="get" action="/Home/ChatList" class="back-button">
+            <input type="hidden" name="username" value="@ViewBag.Username" />
+            <button type="submit">Назад к списку чатов</button>
+        </form>
+        <h1 class="name">Chat @ViewBag.ChatName</h1>
+    </div>
     <div class="input-container">
         <input type="text" id="message" /><br /><br />
         <input type="button" id="sendBtn" value="Отправить" disabled="disabled" />
     </div>
     <div id="chatroom"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
-
+    <script src="~/js/theme.js"></script>
     <script>
         const username = '@ViewBag.Username';
 
