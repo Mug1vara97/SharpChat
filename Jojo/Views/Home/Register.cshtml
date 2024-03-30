@@ -1,9 +1,10 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register Page</title>
     <link rel="stylesheet" href="~/css/theme.css">
     <script src="~/js/theme.js"></script>
     <style>
@@ -44,7 +45,7 @@
                 object-fit: cover;
             }
 
-        .login {
+        .register {
             max-width: 450px;
             padding: 45px;
         }
@@ -72,31 +73,39 @@
                     color: #fff;
                     border: none;
                     cursor: pointer;
-                    display: block; /* Make the button block-level */
-                    margin: 0 auto; /* Center the button */
-                    width: 100px; /* Decrease the width of the button */
-                    margin-right: 45px; /* Move the button to the right */
+                    display: block;
+                    margin: 0 auto;
+                    width: 160px;
+                    margin-right: 45px;
                 }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="left-side">
             <img src="~/Photo/restaurant5.jpeg" alt="Photo">
         </div>
         <div class="right-side">
-            <div class="login">
-                <h2>Авторизация</h2>
-                <form method="post" action="/Home/Login">
+            <div class="register">
+                <h2>Регистрация</h2>
+                <form method="post" action="/Home/Register">
                     <label for="username">Никнейм:</label><br>
                     <input type="text" id="username" name="username" required><br><br>
+                    <label for="name">Имя:</label><br>
+                    <input type="text" id="name" name="name" required><br><br>
+                    <label for="surname">Фамилия:</label><br>
+                    <input type="text" id="surname" name="surname" required><br><br>
+                    <label for="email">Почта:</label><br>
+                    <input type="email" id="email" name="email" required><br><br>
                     <label for="password">Пароль:</label><br>
                     <input type="password" id="password" name="password" required><br><br>
-                    <input type="submit" value="Login">
-                    <a href="/Home/Register" class="register-btn">Register</a>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
+                    <input type="submit" value="Регистрация">
                 </form>
             </div>
         </div>
     </div>
 </body>
+
 </html>

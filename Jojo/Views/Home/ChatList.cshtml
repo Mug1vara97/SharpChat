@@ -3,13 +3,150 @@
 <head>
     <meta charset="utf-8" />
     <title>Chat List</title>
+    <link rel="stylesheet" href="~/css/theme.css">
+    <script src="~/js/theme.js"></script>
+    <style>
+        .chat-button {
+            display: block;
+            margin: 10px;
+            padding: 5px 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            text-decoration: none;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            margin: 10px;
+            padding: 5px 10px;
+            background-color: #55b2d8;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            margin: 5px;
+            padding: 10px;
+        }
+
+        form {
+            margin-top: 10px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            z-index: 9999;
+        }
+
+        .dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+    </style>
 </head>
 <body>
+    <button onclick="openCreateChatModal()">Create Chat</button>
+
+    <div id="createChatModal" class="modal">
+        <h1>Create Chat</h1>
+        <form id="createChatForm" method="post">
+            <label for="chatName">Chat Name:</label>
+            <input type="text" id="chatName" name="chatName" />
+            <label for="chatDescription">Chat Description:</label>
+            <input type="text" id="chatDescription" name="chatDescription" />
+            <input type="hidden" id="username" name="username" value="@ViewBag.Username" />
+            <input type="submit" value="Create Chat" />
+        </form>
+    </div>
+    <button class="button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
     <ul>
         @foreach (var chat in ViewBag.Chats)
         {
-            <li><a href="/Home/Chat?username=@ViewBag.Username&chatId=@chat.Id">Chat @chat.Id</a></li>
+            <li>
+                <a class="chat-button" href="/Home/Chat?username=@ViewBag.Username&chatId=@chat.Id">@chat.Name</a>
+                <p>@chat.Description</p>
+                @if (chat.CreatedBy == ViewBag.Username)
+                {
+                    <form method="post" action="/Home/DeleteChat">
+                        <input type="hidden" name="username" value="@ViewBag.Username" />
+                        <input type="hidden" name="chatId" value="@chat.Id" />
+                        <button type="submit">Delete</button>
+                    </form>
+                }
+            </li>
         }
+
     </ul>
+    <script>
+        function openCreateChatModal() {
+            document.getElementById('createChatModal').style.display = 'block';
+        }
+
+        document.getElementById('createChatForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            let formData = new FormData(this);
+
+            fetch('/Home/CreateChat', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        fetch('/Home/ChatList?username=' + formData.get('username'))
+                            .then(response => response.text())
+                            .then(data => {
+                                document.body.innerHTML = data;
+                            });
+                    }
+                });
+
+            document.getElementById('createChatModal').style.display = 'none';
+        });
+
+        function toggleDarkMode() {
+            const body = document.querySelector("body");
+            body.classList.toggle("dark-mode");
+        }
+        document.addEventListener('keydown', function(event) {
+    if (event.key === "Escape") {
+        document.getElementById('createChatModal').style.display = 'none';
+    }
+});
+
+
+    </script>
 </body>
 </html>

@@ -26,7 +26,7 @@ namespace SignalRApp
 
                 await _context.SaveChangesAsync();
 
-                await Clients.Group(chatId.ToString()).SendAsync("Receive", message, username, time.ToString("HH:mm"));
+                await Clients.Group(chatId.ToString()).SendAsync("Receive", message, username, time.ToUniversalTime().ToString("o"));
             }
 
         }
@@ -35,7 +35,7 @@ namespace SignalRApp
             var messages = await _context.ChatMessages.Where(m => m.ChatId == chatId).ToListAsync();
             foreach (var message in messages)
             {
-                await Clients.Caller.SendAsync("Receive", message.Message, message.Username, message.Time.ToString("HH:mm"));
+                await Clients.Caller.SendAsync("Receive", message.Message, message.Username, message.Time.ToUniversalTime().ToString("o"));
             }
         }
         public async Task JoinChatGroup(int chatId)

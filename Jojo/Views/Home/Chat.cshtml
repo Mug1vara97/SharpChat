@@ -6,12 +6,29 @@
 <head>
     <meta charset="utf-8" />
     <title>Chat</title>
+    <link rel="stylesheet" href="~/css/theme.css">
+    <script src="~/js/theme.js"></script>
+
+
     <style>
-        .message {
-            background-color: #DCF8C6;
+        .message, .other-message {
+            width: 50%;
             padding: 10px;
             border-radius: 10px;
             margin-top: 10px;
+            word-wrap: break-word;
+        }
+
+        .message {
+            background-color: #DCF8C6;
+            float: right;
+            text-align: left;
+        }
+
+        .other-message {
+            background-color: #f2f2f2;
+            float: left;
+            text-align: left;
         }
 
         .username {
@@ -24,20 +41,50 @@
             font-size: 0.8em;
         }
 
-        .other-message {
-            background-color: #f2f2f2;
+        .input-container {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
             padding: 10px;
-            border-radius: 10px;
-            margin-top: 10px;
+            background-color: #f2f2f2;
+            display: flex;
+            align-items: center;
+            left: 0
         }
+
+            .input-container input[type="text"] {
+                flex: 1;
+                padding: 10px;
+                border: none;
+                border-radius: 25px;
+                background-color: #fff;
+                margin-right: 20px;
+
+            }
+
+            .input-container input[type="button"] {
+                background-color: #0088cc;
+                color: #fff;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 25px;
+                margin-right: 20px;
+                cursor: pointer;
+            }
+
+        #chatroom {
+            height: 83vh;
+            overflow-y: auto;
+        }
+
 
     </style>
 
 </head>
 <body>
-    <div>
-        <h1>Chat @ViewBag.ChatId</h1>
-        Введите сообщение:<br />
+    <h1>Chat @ViewBag.ChatName</h1>
+    <a href="/Home/ChatList?username=@ViewBag.Username">Назад к списку чатов</a>
+    <div class="input-container">
         <input type="text" id="message" /><br /><br />
         <input type="button" id="sendBtn" value="Отправить" disabled="disabled" />
     </div>
@@ -94,7 +141,9 @@
 
             const timeElem = document.createElement("span");
             timeElem.classList.add("time");
-            timeElem.textContent = time;
+
+            const localTime = new Date(time);
+            timeElem.textContent = localTime.toLocaleTimeString();
 
             messageElem.appendChild(usernameElem);
             messageElem.appendChild(br1);
@@ -105,6 +154,7 @@
             const chatroom = document.getElementById("chatroom");
             chatroom.appendChild(messageElem);
         });
+
 
         hubConnection.start()
             .then(function () {
@@ -118,5 +168,6 @@
             });
 
     </script>
+
 </body>
 </html>

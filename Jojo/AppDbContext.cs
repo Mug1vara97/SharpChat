@@ -8,7 +8,9 @@ namespace Jojo.Models
         {
         }
 
-        public DbSet<ChatMessage> ChatMessages { get; set; }
-        public DbSet<Chat> Chats { get; set; }
+            public DbSet<ChatMessage> ChatMessages { get; set; }
+            public DbSet<Chat> Chats { get; set; }
+            public DbSet<User> Users { get; set; }
+
     }
 }
