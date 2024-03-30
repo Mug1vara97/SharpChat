@@ -1,9 +1,8 @@
-﻿﻿
-<!doctype html>
+﻿<!doctype html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Chat List</title>
+    <title>Group Chat List</title>
     <style>
         .chat-button {
             display: block;
@@ -89,33 +88,35 @@
     <link rel="stylesheet" href="~/css/theme.css">
 </head>
 <body>
-    <button onclick="openCreateChatModal()">Create Chat</button>
+    <button onclick="location.href='/Home/ChatList?username=@ViewBag.Username'">Back to Chat List</button>
+    <button onclick="openCreateGroupChatModal()">Create Group Chat</button>
 
-    <div id="createChatModal" class="modal">
-        <h1>Create Chat</h1>
-        <form id="createChatForm" method="post">
-            <label for="chatName">Chat Name:</label>
-            <input type="text" id="chatName" name="chatName" />
-            <label for="chatDescription">Chat Description:</label>
-            <input type="text" id="chatDescription" name="chatDescription" />
+    <div id="createGroupChatModal" class="modal">
+        <h1>Create Group Chat</h1>
+        <form id="createGroupChatForm" method="post">
+            <label for="groupChatName">Group Chat Name:</label>
+            <input type="text" id="groupChatName" name="groupChatName" />
             <input type="hidden" id="username" name="username" value="@ViewBag.Username" />
         </form>
-        <button onclick="openCreateChatModal()">Create Chat</button>
+        <button onclick="openCreateGroupChatModal()">Create Group Chat</button>
     </div>
     <button class="button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
 
     <ul>
-        @foreach (var chat in ViewBag.Chats)
+        @foreach (var groupChat in ViewBag.GroupChats)
         {
             <li class="li">
-                <a class="chat-button" href="/Home/Chat?username=@ViewBag.Username&chatId=@chat.Id">@chat.Name</a>
-                <p class=" lip">@chat.Description</p>
-                @if (chat.CreatedBy == ViewBag.Username)
+                <a class="chat-button" href="/Home/GroupChat?username=@ViewBag.Username&groupChatId=@groupChat.Id">@groupChat.Name</a>
+                @if (groupChat.Users.Contains(ViewBag.Username))
                 {
-                    <form method="post" action="/Home/DeleteChat">
+                    <p>Joined</p>
+                }
+                else
+                {
+                    <form method="post" action="/Home/JoinGroupChat">
                         <input type="hidden" name="username" value="@ViewBag.Username" />
-                        <input type="hidden" name="chatId" value="@chat.Id" />
-                        <button type="submit">Delete</button>
+                        <input type="hidden" name="groupChatId" value="@groupChat.Id" />
+                        <button type="submit">Join</button>
                     </form>
                 }
             </li>
@@ -124,22 +125,22 @@
     </ul>
     <script src="~/js/theme.js"></script>
     <script>
-        function openCreateChatModal() {
-            document.getElementById('createChatModal').style.display = 'block';
+        function openCreateGroupChatModal() {
+            document.getElementById('createGroupChatModal').style.display = 'block';
         }
 
-        document.getElementById('createChatForm').addEventListener('submit', function (event) {
+        document.getElementById('createGroupChatForm').addEventListener('submit', function (event) {
             event.preventDefault();
 
             let formData = new FormData(this);
 
-            fetch('/Home/CreateChat', {
+            fetch('/Home/CreateGroupChat', {
                 method: 'POST',
                 body: formData
             })
                 .then(response => {
                     if (response.ok) {
-                        fetch('/Home/ChatList?username=' + formData.get('username'))
+                        fetch('/Home/GroupChatList?username=' + formData.get('username'))
                             .then(response => response.text())
                             .then(data => {
                                 document.body.innerHTML = data;
@@ -147,15 +148,14 @@
                     }
                 });
 
-            document.getElementById('createChatModal').style.display = 'none';
+            document.getElementById('createGroupChatModal').style.display = 'none';
         });
 
         document.addEventListener('keydown', function (event) {
             if (event.key === "Escape") {
-                document.getElementById('createChatModal').style.display = 'none';
+                document.getElementById('createGroupChatModal').style.display = 'none';
             }
         });
-
 
     </script>
 </body>

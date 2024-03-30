@@ -167,6 +167,67 @@ namespace Jojo.Controllers
             }
             return View();
         }
+        /*
+        public IActionResult GroupChatList(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Login");
+            }
+
+            ViewBag.Username = username;
+
+            var groupChats = _context.GroupChats.ToList();
+            ViewBag.GroupChats = groupChats;
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GroupChat(string username, int groupChatId, string groupChatName)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Login");
+            }
+
+            ViewBag.Username = username;
+            ViewBag.GroupChatId = groupChatId;
+
+            var groupChat = _context.GroupChats.Find(groupChatId);
+            if (groupChat != null)
+            {
+                ViewBag.GroupChatName = groupChat.Name;
+            }
+
+            var messages = _context.GroupChatMessages.Where(m => m.GroupChatId == groupChatId).ToList();
+            ViewBag.Messages = messages;
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateGroupChat(string groupChatName, string username)
+        {
+            if (!string.IsNullOrEmpty(groupChatName) && !string.IsNullOrEmpty(username))
+            {
+                var newGroupChat = new GroupChat { Name = groupChatName };
+                _context.GroupChats.Add(newGroupChat);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("GroupChatList", new { username });
+        }
+
+        public IActionResult GroupChat()
+        {
+            return View();
+        }
+
+        public IActionResult DeleteGroupChat()
+        {
+            return View();
+        }*/
 
     }
 }
