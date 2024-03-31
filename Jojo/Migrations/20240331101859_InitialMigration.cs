@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -20,7 +21,8 @@ namespace Jojo.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: false)
+                    CreatedBy = table.Column<string>(type: "text", nullable: false),
+                    AllowedUsers = table.Column<List<string>>(type: "text[]", nullable: false)
                 },
                 constraints: table =>
                 {

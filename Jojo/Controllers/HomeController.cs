@@ -20,16 +20,6 @@ namespace Jojo.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -44,11 +34,17 @@ namespace Jojo.Controllers
 
             ViewBag.Username = username;
 
+            // Получить все чаты
             var chats = _context.Chats.ToList();
-            ViewBag.Chats = chats;
+
+            // Фильтровать чаты, чтобы показывать только те, где пользователь участвует
+            var userChats = chats.Where(c => c.AllowedUsers.Contains(username)).ToList();
+
+            ViewBag.Chats = userChats;
 
             return View();
         }
+
 
         [HttpGet]
         public IActionResult Chat(string username, int chatId, string chatName)
@@ -73,17 +69,32 @@ namespace Jojo.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> CreateChat(string chatName, string chatDescription, string username)
+        public async Task<IActionResult> CreateChat(string chatName, string chatDescription, string username, string addUsersType, string allowedUsers)
         {
             if (!string.IsNullOrEmpty(chatName) && !string.IsNullOrEmpty(username))
             {
-                var newChat = new Chat { Name = chatName, Description = chatDescription, CreatedBy = username };
+                List<string> allowedUsersList = new List<string>();
+
+                if (addUsersType == "all")
+                {
+                    allowedUsersList = _context.Users.Select(u => u.Username).ToList();
+                }
+                else
+                {
+                    allowedUsersList = allowedUsers.Split(',').Select(u => u.Trim()).ToList();
+                }
+
+                allowedUsersList.Add(username);
+
+                var newChat = new Chat { Name = chatName, Description = chatDescription, CreatedBy = username, AllowedUsers = allowedUsersList };
                 _context.Chats.Add(newChat);
-                await _context.SaveChangesAsync(); _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
 
             return RedirectToAction("ChatList", new { username });
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> DeleteChat(string username, int chatId)
@@ -167,67 +178,13 @@ namespace Jojo.Controllers
             }
             return View();
         }
-        /*
-        public IActionResult GroupChatList(string username)
+        public IActionResult UsersList(string username)
         {
-            if (string.IsNullOrEmpty(username))
-            {
-                return RedirectToAction("Login");
-            }
-
             ViewBag.Username = username;
-
-            var groupChats = _context.GroupChats.ToList();
-            ViewBag.GroupChats = groupChats;
-
-            return View();
+            var users = _context.Users.ToList();
+            return View(users);
         }
 
-        [HttpGet]
-        public IActionResult GroupChat(string username, int groupChatId, string groupChatName)
-        {
-            if (string.IsNullOrEmpty(username))
-            {
-                return RedirectToAction("Login");
-            }
-
-            ViewBag.Username = username;
-            ViewBag.GroupChatId = groupChatId;
-
-            var groupChat = _context.GroupChats.Find(groupChatId);
-            if (groupChat != null)
-            {
-                ViewBag.GroupChatName = groupChat.Name;
-            }
-
-            var messages = _context.GroupChatMessages.Where(m => m.GroupChatId == groupChatId).ToList();
-            ViewBag.Messages = messages;
-
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateGroupChat(string groupChatName, string username)
-        {
-            if (!string.IsNullOrEmpty(groupChatName) && !string.IsNullOrEmpty(username))
-            {
-                var newGroupChat = new GroupChat { Name = groupChatName };
-                _context.GroupChats.Add(newGroupChat);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToAction("GroupChatList", new { username });
-        }
-
-        public IActionResult GroupChat()
-        {
-            return View();
-        }
-
-        public IActionResult DeleteGroupChat()
-        {
-            return View();
-        }*/
 
     }
 }

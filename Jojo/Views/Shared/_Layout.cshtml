@@ -1,16 +1,63 @@
-﻿<!-- layout.cshtml -->
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
-    <!-- Общие стили -->
-    <link rel="stylesheet" href="~/css/styles.css">
+    <style>
+        .container {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 200px;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .content {
+            flex: 1;
+            padding-left: 10px;
+        }
+
+
+    </style>
 </head>
 <body>
-    @RenderBody()
-    <!-- Общие скрипты -->
-    <script src="~/js/scripts.js"></script>
+    <div class="container">
+        <div class="sidebar">
+            <button id="changeThemeBtn">Сменить тему</button>
+
+            <form action="UsersList" method="get">
+                <input type="hidden" name="username" value="@ViewBag.Username" />
+                @if (!ViewContext.RouteData.Values["action"].ToString().Equals("UsersList", StringComparison.OrdinalIgnoreCase))
+                {
+                    <button type="submit" id="usersListBtn">
+                        Список пользователей
+                    </button>
+                }
+            </form>
+
+            <form action="ChatList" method="get">
+                <input type="hidden" name="username" value="@ViewBag.Username" />
+                @if (!ViewContext.RouteData.Values["action"].ToString().Equals("ChatList", StringComparison.OrdinalIgnoreCase))
+                {
+                    <button type="submit" id="chatListBtn">
+                        Список чатов
+                    </button>
+                }
+            </form>
+
+            <form action="Login" method="get">
+                <button type="submit" id="logoutBtn">
+                    Разлогиниться
+                </button>
+            </form>
+        </div>
+
+        <div class="content">
+            @RenderBody()
+        </div>
+    </div>
 </body>
 </html>

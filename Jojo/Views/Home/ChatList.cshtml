@@ -1,5 +1,4 @@
-﻿﻿
-<!doctype html>
+﻿<!doctype html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -86,47 +85,62 @@
         }
 
     </style>
-    <link rel="stylesheet" href="~/css/theme.css">
 </head>
 <body>
-    <button onclick="openCreateChatModal()">Create Chat</button>
+    <button onclick="openCreateChatModal()">Создать чат</button>
 
     <div id="createChatModal" class="modal">
-        <h1>Create Chat</h1>
+        <h1>Создание чата</h1>
         <form id="createChatForm" method="post">
-            <label for="chatName">Chat Name:</label>
+            <label for="chatName">Название чата:</label>
             <input type="text" id="chatName" name="chatName" />
-            <label for="chatDescription">Chat Description:</label>
+            <label for="chatDescription">Описание:</label>
             <input type="text" id="chatDescription" name="chatDescription" />
             <input type="hidden" id="username" name="username" value="@ViewBag.Username" />
-        </form>
-        <button onclick="openCreateChatModal()">Create Chat</button>
-    </div>
-    <button class="button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+            <label for="addUsersType">Тип чата:</label>
+            <select id="addUsersType" name="addUsersType">
+                <option value="all">Общий</option>
+                <option value="specific">Приватный</option>
+            </select>
 
+            <div id="specificUsersInput" style="display: none;">
+                <label for="allowedUsers">Введите пользователей:</label>
+                <input type="text" id="allowedUsers" name="allowedUsers" />
+            </div>
+
+            <button type="submit">Create Chat</button>
+        </form>
+    </div>
     <ul>
         @foreach (var chat in ViewBag.Chats)
         {
             <li class="li">
                 <a class="chat-button" href="/Home/Chat?username=@ViewBag.Username&chatId=@chat.Id">@chat.Name</a>
-                <p class=" lip">@chat.Description</p>
+                <p class="lip">@chat.Description</p>
                 @if (chat.CreatedBy == ViewBag.Username)
                 {
                     <form method="post" action="/Home/DeleteChat">
                         <input type="hidden" name="username" value="@ViewBag.Username" />
                         <input type="hidden" name="chatId" value="@chat.Id" />
-                        <button type="submit">Delete</button>
+                        <button type="submit">Удалить</button>
                     </form>
                 }
             </li>
         }
-
     </ul>
     <script src="~/js/theme.js"></script>
     <script>
         function openCreateChatModal() {
             document.getElementById('createChatModal').style.display = 'block';
         }
+
+        document.getElementById('addUsersType').addEventListener('change', function () {
+            if (this.value === 'specific') {
+                document.getElementById('specificUsersInput').style.display = 'block';
+            } else {
+                document.getElementById('specificUsersInput').style.display = 'none';
+            }
+        });
 
         document.getElementById('createChatForm').addEventListener('submit', function (event) {
             event.preventDefault();
@@ -155,7 +169,6 @@
                 document.getElementById('createChatModal').style.display = 'none';
             }
         });
-
 
     </script>
 </body>
