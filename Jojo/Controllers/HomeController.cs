@@ -38,7 +38,7 @@ namespace Jojo.Controllers
             var chats = _context.Chats.ToList();
 
             // Фильтровать чаты, чтобы показывать только те, где пользователь участвует
-            var userChats = chats.Where(c => c.AllowedUsers.Contains(username)).ToList();
+            var userChats = chats.Where(c => c.AllowedUsers.Contains(username) || c.AllowedUsers.Contains("public")).ToList();
 
             ViewBag.Chats = userChats;
 
@@ -77,14 +77,17 @@ namespace Jojo.Controllers
 
                 if (addUsersType == "all")
                 {
-                    allowedUsersList = _context.Users.Select(u => u.Username).ToList();
+                    allowedUsersList.Add("public");
                 }
                 else
                 {
                     allowedUsersList = allowedUsers.Split(',').Select(u => u.Trim()).ToList();
                 }
 
-                allowedUsersList.Add(username);
+                if (!allowedUsersList.Contains(username))
+                {
+                    allowedUsersList.Add(username);
+                }
 
                 var newChat = new Chat { Name = chatName, Description = chatDescription, CreatedBy = username, AllowedUsers = allowedUsersList };
                 _context.Chats.Add(newChat);
@@ -184,7 +187,32 @@ namespace Jojo.Controllers
             var users = _context.Users.ToList();
             return View(users);
         }
+        [HttpPost]
+        public async Task<IActionResult> AddUserToChat(string username, int chatId, string addedUser)
+        {
+            var chat = _context.Chats.Find(chatId);
 
+            if (chat != null && chat.CreatedBy == username)
+            {
+                chat.AllowedUsers.Add(addedUser);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("ChatList", new { username });
+        }
+        [HttpPost]
+        public async Task<IActionResult> RemoveUserFromChat(string username, int chatId, string removedUser)
+        {
+            var chat = _context.Chats.Find(chatId);
+
+            if (chat != null && chat.CreatedBy == username)
+            {
+                chat.AllowedUsers.Remove(removedUser);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("ChatList", new { username });
+        }
 
     }
 }

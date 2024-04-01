@@ -20,5 +20,8 @@ namespace Jojo.Models
         public string Password { get; set; }
 
         public bool IsEmailVerified { get; set; }
+
+        public string ProfileDescription { get; set; } 
+        public string ProfilePhotoUrl { get; set; }
     }
 }

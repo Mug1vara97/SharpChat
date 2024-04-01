@@ -85,6 +85,7 @@
         }
 
     </style>
+    <link rel="stylesheet" href="~/css/theme.css">
 </head>
 <body>
     <button onclick="openCreateChatModal()">Создать чат</button>
@@ -119,14 +120,36 @@
                 <p class="lip">@chat.Description</p>
                 @if (chat.CreatedBy == ViewBag.Username)
                 {
+                    @if (!chat.AllowedUsers.Contains("public"))
+                    {
+                        <form method="post" action="/Home/AddUserToChat">
+                            <input type="hidden" name="username" value="@ViewBag.Username" />
+                            <input type="hidden" name="chatId" value="@chat.Id" />
+                            <input type="text" name="addedUser" placeholder="Enter username to add" />
+                            <button type="submit">Add User</button>
+                        </form>
+
+                        <form method="post" action="/Home/RemoveUserFromChat">
+                            <input type="hidden" name="username" value="@ViewBag.Username" />
+                            <input type="hidden" name="chatId" value="@chat.Id" />
+                            <button type="button" class="removeUserButton">Удалить пользователя</button>
+                            <ul class="userList" style="display: none; max-height: 150px; overflow-y: auto;">
+                                @foreach (var user in chat.AllowedUsers)
+                                {
+                                    <li>@user <button type="submit" name="removedUser" value="@user">Remove</button></li>
+                                }
+                            </ul>
+                        </form>
+                    }
                     <form method="post" action="/Home/DeleteChat">
                         <input type="hidden" name="username" value="@ViewBag.Username" />
                         <input type="hidden" name="chatId" value="@chat.Id" />
-                        <button type="submit">Удалить</button>
+                        <button type="submit">Удалить Чат</button>
                     </form>
                 }
             </li>
         }
+
     </ul>
     <script src="~/js/theme.js"></script>
     <script>
@@ -169,6 +192,17 @@
                 document.getElementById('createChatModal').style.display = 'none';
             }
         });
+        document.querySelectorAll('.removeUserButton').forEach(button => {
+            button.addEventListener('click', function () {
+                let userList = this.parentNode.querySelector('.userList');
+                if (userList.style.display === 'none') {
+                    userList.style.display = 'block';
+                } else {
+                    userList.style.display = 'none';
+                }
+            });
+        });
+
 
     </script>
 </body>

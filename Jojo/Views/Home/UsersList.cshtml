@@ -1,14 +1,16 @@
-﻿@model List<User>
+﻿<link rel="stylesheet" href="~/css/theme.css">
+<div>
+    <h1>Список пользователей</h1>
 
-<h1>Список пользователей</h1>
+    <input type="text" id="searchInput" placeholder="Поиск по пользователям...">
+    <ul id="userList">
+        @foreach (var user in Model)
+        {
+            <li>@user.Username</li>
+        }
+    </ul>
 
-<input type="text" id="searchInput" placeholder="Поиск по пользователям...">
-<ul id="userList">
-    @foreach (var user in Model)
-    {
-        <li>@user.Username</li>
-    }
-</ul>
+</div>
 
 <script>
     document.getElementById("searchInput").addEventListener("keyup", function () {
