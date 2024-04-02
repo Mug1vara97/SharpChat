@@ -1,0 +1,271 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>News Feed</title>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            z-index: 9999;
+            width: 400px;
+            height: 300px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        p {
+            color: #555;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            height: 725px; 
+            overflow-y: auto; 
+            overflow-x: hidden;
+        }
+
+        li {
+            background-color: #fff;
+            padding: 10px;
+            margin: 10px 10px 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 1420px;
+        }
+
+        h3 {
+            color: #333;
+        }
+
+        small {
+            color: #888;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        input, textarea {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+
+        .edit-button {
+            float: right;
+            margin-right: 10px;
+            margin-top: -10px;
+        }
+
+        .delete-button {
+            float: right;
+            margin-right: 10px;
+            margin-top: -10px;
+        }
+
+        #createNewsButton {
+            float: right;
+            margin-right: 20px;
+            margin-top: -10px;
+        }
+
+        p.content {
+            word-wrap: break-word;
+        }
+
+        .photo {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+    <link rel="stylesheet" href="~/css/theme.css">
+</head>
+<body>
+
+    @model List<NewsFeedItem>
+
+    <h2>News Feed</h2>
+
+    <p>Welcome, @ViewBag.Username!  <button id="createNewsButton" onclick="openCreateNewsModal()">Создать новость</button></p>
+
+    @if (Model != null)
+    {
+        <ul>
+            @foreach (var item in Model)
+            {
+                <li>
+                    <h3>@item.Title</h3>
+                    @if (string.IsNullOrEmpty(item.ContentType))
+                    {
+                        <p class="content">@item.Content</p>
+                    }
+                    else
+                    {
+                        <img class="photo"src="data:@item.ContentType;base64,@Convert.ToBase64String(item.Photo)" alt="@item.Title" style="max-width: 90%;" />
+                        <p class="content">@item.Content</p>
+                    }
+                    <small> @item.PostedDate  @item.Author</small>
+
+                    @if (item.Author == ViewBag.Username)
+                    {
+                        <button class="delete-button" onclick="deleteNews(@item.Id)">Удалить</button>
+                        <button class="edit-button" onclick="editNews(@item.Id)">Редактировать </button>
+                    }
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No news feed items available</p>
+    }
+
+   
+
+    <div id="createNewsModal" class="modal" style="display: none;">
+        <h1>Создание новости</h1>
+        <form id="createNewsForm" method="post" action="/Home/CreateNews">
+            <input type="hidden" name="username" value="@ViewBag.Username" />
+            <label>Title:</label><br />
+            <input type="text" name="title" /><br />
+            <label>Content:</label><br />
+            <textarea name="content"></textarea><br />
+            <label>Photo:</label><br />
+            <input type="file" name="photo" accept="image/*" onchange="previewPhoto(event)" /><br />
+            <img id="photoPreview" src="#" alt="Photo Preview" style="display:none; height:100px;" /><br />
+            <button type="submit">Create News</button>
+        </form>
+    </div>
+    <div id="editNewsModal" class="modal" style="display: none;">
+        <h1>Редактирование новости</h1>
+        <form id="editNewsForm" method="post" action="/Home/EditNews">
+            <input type="hidden" name="newsId" id="editNewsId" />
+            <input type="hidden" name="username" value="@ViewBag.Username" />
+            <label>Title:</label><br />
+            <input type="text" name="title" id="editNewsTitle" /><br />
+            <label>Content:</label><br />
+            <textarea name="content" id="editNewsContent"></textarea><br />
+            <button type="submit">Save News</button>
+        </form>
+    </div>
+
+    <script src="/js/theme.js"></script>
+    <script>
+        function openCreateNewsModal() {
+            document.getElementById('createNewsModal').style.display = 'block';
+        }
+
+        document.getElementById('createNewsForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            let formData = new FormData(this);
+
+            fetch('/Home/CreateNews', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        fetch('/Home/NewsFeed?username=' + formData.get('username'))
+                            .then(response => response.text())
+                            .then(data => {
+                                document.body.innerHTML = data;
+                            });
+                    }
+                });
+
+            document.getElementById('createNewsModal').style.display = 'none';
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === "Escape") {
+                document.getElementById('createNewsModal').style.display = 'none';
+            }
+        });
+
+        function deleteNews(newsItemId) {
+            fetch('/Home/DeleteNews?newsItemId=' + newsItemId, {
+                method: 'POST'
+            })
+                .then(response => {
+                    // Reload the page after deletion
+                    window.location.reload();
+                });
+        }
+        function editNews(newsItemId) {
+            // Запрос на загрузку данных новости для редактирования
+            fetch('/Home/GetNews?id=' + newsItemId)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('editNewsId').value = data.id;
+                    document.getElementById('editNewsTitle').value = data.title;
+                    document.getElementById('editNewsContent').value = data.content;
+                    document.getElementById('editNewsModal').style.display = 'block';
+                });
+        }
+
+        document.getElementById('editNewsForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            let formData = new FormData(this);
+
+            fetch('/Home/EditNews', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    }
+                });
+
+            document.getElementById('editNewsModal').style.display = 'none';
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === "Escape") {
+                document.getElementById('editNewsModal').style.display = 'none';
+            }
+        });
+        function previewPhoto(event) {
+            var input = event.target;
+            var reader = new FileReader();
+            reader.onload = function () {
+                var img = document.getElementById('photoPreview');
+                img.src = reader.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    </script>
+
+</body>
+</html>

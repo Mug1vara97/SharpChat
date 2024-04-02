@@ -25,12 +25,24 @@
         }
 
         button {
-            margin: 10px;
+            background-color: #007bff;
+            color: #fff;
             padding: 5px 10px;
-            background-color: #55b2d8;
             border: none;
-            color: white;
+            border-radius: 3px;
             cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        input, textarea {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
         }
 
         ul {
@@ -68,10 +80,6 @@
             height: 300px;
         }
 
-        .dark-mode {
-            background-color: #333;
-            color: #fff;
-        }
 
         .li {
             background-color: #fff;
@@ -168,6 +176,12 @@
         document.getElementById('createChatForm').addEventListener('submit', function (event) {
             event.preventDefault();
 
+            let chatNameInput = document.getElementById('chatName');
+            if (chatNameInput.value.length > 50) {
+                alert('Название чата не должно превышать 50 символов.');
+                return;
+            }
+
             let formData = new FormData(this);
 
             fetch('/Home/CreateChat', {
@@ -186,6 +200,7 @@
 
             document.getElementById('createChatModal').style.display = 'none';
         });
+
 
         document.addEventListener('keydown', function (event) {
             if (event.key === "Escape") {

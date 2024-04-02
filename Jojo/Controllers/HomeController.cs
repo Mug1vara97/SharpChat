@@ -213,6 +213,89 @@ namespace Jojo.Controllers
 
             return RedirectToAction("ChatList", new { username });
         }
+        public IActionResult NewsFeed(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Login");
+            }
+
+            var newsFeedItems = _context.NewsFeedItems.ToList();
+
+            ViewBag.Username = username;
+
+            return View(newsFeedItems);
+        }
+
+        public IActionResult CreateNews(string username)
+        {
+            ViewBag.Username = username;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateNews(string username, string title, string content, IFormFile photo)
+        {
+            if (!string.IsNullOrEmpty(title) && !string.IsNullOrEmpty(content))
+            {
+                var newNewsFeedItem = new NewsFeedItem
+                {
+                    Title = title,
+                    Content = content,
+                    PostedDate = DateTime.UtcNow,
+                    Author = username
+                };
+
+                if (photo != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await photo.CopyToAsync(memoryStream);
+                        newNewsFeedItem.Photo = memoryStream.ToArray();
+                        newNewsFeedItem.ContentType = photo.ContentType;
+                    }
+                }
+
+                _context.NewsFeedItems.Add(newNewsFeedItem);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("NewsFeed", new { username });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteNews(int newsItemId)
+        {
+            var newsItem = _context.NewsFeedItems.Find(newsItemId);
+
+            if (newsItem != null)
+            {
+                _context.NewsFeedItems.Remove(newsItem);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("NewsFeed");
+        }
+        public IActionResult GetNews(int id)
+        {
+            var newsItem = _context.NewsFeedItems.Find(id);
+            return Json(newsItem);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditNews(int newsId, string title, string content)
+        {
+            var newsItem = _context.NewsFeedItems.Find(newsId);
+
+            if (newsItem != null)
+            {
+                newsItem.Title = title;
+                newsItem.Content = content;
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
 
     }
 }

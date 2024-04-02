@@ -20,6 +20,42 @@
             padding-left: 10px;
         }
 
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 200px;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .content {
+            flex: 1;
+            padding-left: 10px;
+        }
+
+        button {
+            margin: 10px;
+            padding: 5px 10px;
+            background-color: #55b2d8;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #0077b7;
+            }
+
+
 
     </style>
 </head>
@@ -48,18 +84,33 @@
                 }
             </form>
 
+            <form action="NewsFeed" method="get">
+                <input type="hidden" name="username" value="@ViewBag.Username" />
+                @if (!ViewContext.RouteData.Values["controller"].ToString().Equals("Home", StringComparison.OrdinalIgnoreCase) || !ViewContext.RouteData.Values["action"].ToString().Equals("NewsFeed", StringComparison.OrdinalIgnoreCase))
+                {
+                    <button type="submit" id="newsFeedBtn">
+                        Новостная лента
+                    </button>
+                }
+            </form>
+
             <form action="Login" method="get">
                 <button type="submit" id="logoutBtn">
                     Разлогиниться
                 </button>
             </form>
-        </div>
 
+        </div>
         <div class="content">
             @RenderBody()
         </div>
     </div>
     <script src="~/js/theme.js"></script>
+    <script>
+        document.getElementById('changeThemeBtn').addEventListener('click', function () {
+            document.body.classList.toggle('dark-mode');
+        });
 
+    </script>
 </body>
 </html>
