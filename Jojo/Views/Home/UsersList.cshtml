@@ -22,8 +22,32 @@
     }
 
     .search {
-        width: 1430px;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
     }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    a {
+        text-decoration: none;
+        color: #007bff;
+    }
+
+        a:hover {
+            text-decoration: underline;
+        }
 </style>
 <div>
     <h1>Список пользователей</h1>
@@ -32,7 +56,9 @@
     <ul id="userList">
         @foreach (var user in Model)
         {
-            <li>@user.Username</li>
+            <li>
+                <button onclick="window.location.href='@Url.Action("Profile", "Home", new { username = ViewBag.Username, profilename = user.Username })'">@user.Username</button>
+            </li>
         }
     </ul>
 

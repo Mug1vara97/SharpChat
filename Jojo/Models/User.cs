@@ -20,7 +20,10 @@ namespace Jojo.Models
         public string Password { get; set; }
 
         public bool IsEmailVerified { get; set; }
-
+        public string? ProfileDescription { get; set; }
+        public byte[]? ProfilePhoto { get; set; }
+        public string? ProfilePhotoContentType { get; set; }
+        public string? BackgroundColor { get; set; }
 
     }
 }

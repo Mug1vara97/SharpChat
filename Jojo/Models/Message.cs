@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace Jojo.Models
+﻿namespace Jojo.Models
 {
     public class ChatMessage
     {

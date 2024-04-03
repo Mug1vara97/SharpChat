@@ -35,7 +35,7 @@
         ul {
             list-style-type: none;
             padding: 0;
-            height: 725px; 
+            height: calc(85vh - 20px);
             overflow-y: auto; 
             overflow-x: hidden;
         }
@@ -46,7 +46,8 @@
             margin: 10px 10px 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
-            width: 1420px;
+            margin-left: 150px;
+            margin-right: 150px;
         }
 
         h3 {
@@ -116,6 +117,8 @@
 
     <p>Welcome, @ViewBag.Username!  <button id="createNewsButton" onclick="openCreateNewsModal()">Создать новость</button></p>
 
+    <input type="text" id="searchInput" placeholder="Поиск новостей..." oninput="searchNews()">
+
     @if (Model != null)
     {
         <ul>
@@ -132,7 +135,9 @@
                         <img class="photo"src="data:@item.ContentType;base64,@Convert.ToBase64String(item.Photo)" alt="@item.Title" style="max-width: 90%;" />
                         <p class="content">@item.Content</p>
                     }
-                    <small> @item.PostedDate  @item.Author</small>
+                    <small>
+                        @item.PostedDate.ToLocalTime() @item.Author
+                    </small>
 
                     @if (item.Author == ViewBag.Username)
                     {
@@ -216,12 +221,10 @@
                 method: 'POST'
             })
                 .then(response => {
-                    // Reload the page after deletion
                     window.location.reload();
                 });
         }
         function editNews(newsItemId) {
-            // Запрос на загрузку данных новости для редактирования
             fetch('/Home/GetNews?id=' + newsItemId)
                 .then(response => response.json())
                 .then(data => {
@@ -265,6 +268,21 @@
             };
             reader.readAsDataURL(input.files[0]);
         }
+        function searchNews() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let newsItems = document.querySelectorAll('li');
+
+            newsItems.forEach(function (newsItem) {
+                let title = newsItem.getElementsByTagName('h3')[0].innerText.toLowerCase();
+                let content = newsItem.getElementsByClassName('content')[0].innerText.toLowerCase();
+                if (title.includes(input) || content.includes(input)) {
+                    newsItem.style.display = 'block';
+                } else {
+                    newsItem.style.display = 'none';
+                }
+            });
+        }
+
     </script>
 
 </body>

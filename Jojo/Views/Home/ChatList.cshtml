@@ -91,6 +91,9 @@
         .lip {
             word-wrap: break-word;
         }
+        .list {
+            width: 1445px;
+        }
 
     </style>
     <link rel="stylesheet" href="~/css/theme.css">
@@ -120,7 +123,7 @@
             <button type="submit">Create Chat</button>
         </form>
     </div>
-    <ul>
+    <ul class="list">
         @foreach (var chat in ViewBag.Chats)
         {
             <li class="li">

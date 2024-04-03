@@ -1,0 +1,309 @@
+﻿
+<style>
+    button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+    input, textarea {
+        width: 100%;
+        padding: 5px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
+    .profile-news-feed {
+        list-style-type: none;
+        padding: 0;
+    }
+
+        .profile-news-feed li {
+            background-color: #fff;
+            padding: 10px;
+            margin: 10px 10px 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-left: 130px;
+            margin-right: 130px;
+        }
+
+        .profile-news-feed h3 {
+            color: #333;
+        }
+
+        .profile-news-feed small {
+            color: #888;
+        }
+
+    .profile-photo {
+        width: 170px;
+        height: 170px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-top: 60px;
+        margin-left: 30px;
+        border: 3px solid #000;
+    }
+
+    .container {
+        height: 150px;
+        width: 100%;
+        border-bottom: 3px solid #000;
+        background-color: @Model.BackgroundColor;
+    }
+
+    .none {
+        margin-top: 100px;
+    }
+
+    .test {
+        width: 600px;
+    }
+
+    .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        z-index: 9999;
+    }
+
+    .profile {
+        background-color: #fff;
+        padding: 10px;
+        margin: 10px 10px 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-left: 130px;
+        margin-right: 130px;
+        margin-top: 100px;
+    }
+
+    .edit-button {
+        float: right;
+        margin-right: 10px;
+        margin-top: -10px;
+    }
+
+    .delete-button {
+        float: right;
+        margin-right: 10px;
+        margin-top: -10px;
+    }
+
+</style>
+<link rel="stylesheet" href="~/css/theme.css">
+
+@model Jojo.Models.User
+<div>
+    <div class="container" style="background-color: @Model.BackgroundColor; width: 100%;">
+
+        @if (Model.ProfilePhoto != null)
+        {
+            <img class="profile-photo" src="data:@Model.ProfilePhotoContentType;base64,@Convert.ToBase64String(Model.ProfilePhoto)" alt="Profile Photo" />
+        }
+        else
+        {
+            <div class="profile-photo" style="background-color: white;">
+            </div>
+        }
+    </div>
+
+    <p style="float: right; margin-top: -140px; margin-right: 20px;">
+        @if (ViewBag.Username == ViewBag.ViewingUser)
+        {
+            <img src="~/css/zxc.png" alt="Edit Profile" onclick="openEditProfileModal()" style="cursor: pointer;" />
+
+        }
+    </p>
+    <p style="float: right; margin-top: 10px; margin-right: 20px;">
+        @if (ViewBag.Username == ViewBag.ViewingUser)
+        {
+            <button onclick="openCreateNewsModal()">Создать новость</button>
+        }
+    </p>
+
+    <div class="profile">
+        <h1>@Model.Username's Profile</h1>
+
+        <p>@Model.Username</p>
+        <p>@Model.Email</p>
+        <h3 style="border-bottom: 2px solid #000;">Обо мне</h3>
+        <p>@Model.ProfileDescription</p>
+    </div>
+
+
+    @if (ViewBag.Username == ViewBag.ViewingUser)
+    {
+        <div id="editProfileModal" class="modal" style="display: none;">
+            <h1>Edit Profile</h1>
+            <form method="post" action="/Home/EditProfile" enctype="multipart/form-data" class="test">
+                <input type="hidden" name="username" value="@ViewBag.Username" />
+                <label>Profile Description:</label><br />
+                <textarea name="profileDescription">@Model.ProfileDescription</textarea><br />
+                <label>Profile Photo:</label><br />
+                <input type="file" name="profilePhoto" accept="image/*" /><br />
+                <label for="backgroundColor">Background Color:</label><br />
+                <input type="color" name="backgroundColor" value="@Model.BackgroundColor" /><br />
+                <button type="submit">Сохранить профиль</button>
+            </form>
+        </div>
+    }
+
+
+    @foreach (var item in ViewBag.UserNewsItems)
+    {
+        <ul class="profile-news-feed">
+            <li>
+                <h3>
+                    @item.Title
+                    @if (item.Author == ViewBag.Username)
+                    {
+                        <button class="delete-button" onclick="deleteNews(@item.Id)">Удалить</button>
+                        <button class="edit-button" onclick="editNews(@item.Id)">Редактировать </button>
+                    }
+                </h3>
+                @if (string.IsNullOrEmpty(item.ContentType))
+                {
+                    <p class="content">@item.Content</p>
+                }
+                else
+                {
+                    <img class="photo" src="data:@item.ContentType;base64,@Convert.ToBase64String(item.Photo)" alt="@item.Title" style="max-width: 90%;" />
+                    <p class="content">@item.Content</p>
+                }
+                <small>
+                    <small>@item.PostedDate.ToLocalTime()</small>
+                </small>
+            </li>
+        </ul>
+
+    }
+    <div id="createNewsModal" class="modal" style="display: none;">
+        <h1>Создание новости</h1>
+        <form id="createNewsForm" method="post" action="/Home/CreateNews">
+            <input type="hidden" name="username" value="@ViewBag.Username" />
+            <label>Title:</label><br />
+            <input type="text" name="title" /><br />
+            <label>Content:</label><br />
+            <textarea name="content"></textarea><br />
+            <label>Photo:</label><br />
+            <input type="file" name="photo" accept="image/*" onchange="previewPhoto(event)" /><br />
+            <img id="photoPreview" src="#" alt="Photo Preview" style="display:none; height:100px;" /><br />
+            <button type="submit">Create News</button>
+        </form>
+    </div>
+    <div id="editNewsModal" class="modal" style="display: none;">
+        <h1>Редактирование новости</h1>
+        <form id="editNewsForm" method="post" action="/Home/EditNews">
+            <input type="hidden" name="newsId" id="editNewsId" />
+            <input type="hidden" name="username" value="@ViewBag.Username" />
+            <label>Title:</label><br />
+            <input type="text" name="title" id="editNewsTitle" /><br />
+            <label>Content:</label><br />
+            <textarea name="content" id="editNewsContent"></textarea><br />
+            <button type="submit">Save News</button>
+        </form>
+    </div>
+</div>
+<script src="/js/theme.js"></script>
+<script>
+    function openCreateNewsModal() {
+        document.getElementById('createNewsModal').style.display = 'block';
+    }
+
+    document.getElementById('createNewsForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        let formData = new FormData(this);
+
+        fetch('/Home/CreateNews', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    fetch('/Home/Profile?username=' + formData.get('username') + '&profilename=' + formData.get('username'))
+                        .then(response => response.text())
+                        .then(newHtml => {
+                            document.body.innerHTML = newHtml;
+                        });
+                }
+            });
+
+        document.getElementById('createNewsModal').style.display = 'none';
+    });
+
+    function openEditProfileModal() {
+        document.getElementById('editProfileModal').style.display = 'block';
+    }
+
+    function previewProfilePhoto(event) {
+        var input = event.target;
+        var reader = new FileReader();
+        reader.onload = function () {
+            var img = document.getElementById('profilePhotoPreview');
+            img.src = reader.result;
+            img.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    function deleteNews(newsItemId) {
+        fetch('/Home/DeleteNews?newsItemId=' + newsItemId, {
+            method: 'POST'
+        })
+            .then(response => {
+                window.location.reload();
+            });
+    }
+    function editNews(newsItemId) {
+        fetch('/Home/GetNews?id=' + newsItemId)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('editNewsId').value = data.id;
+                document.getElementById('editNewsTitle').value = data.title;
+                document.getElementById('editNewsContent').value = data.content;
+                document.getElementById('editNewsModal').style.display = 'block';
+            });
+    }
+
+    document.getElementById('editNewsForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        let formData = new FormData(this);
+
+        fetch('/Home/EditNews', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                }
+            });
+
+        document.getElementById('editNewsModal').style.display = 'none';
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === "Escape") {
+            document.getElementById('editNewsModal').style.display = 'none';
+        }
+    });
+</script>
+
+

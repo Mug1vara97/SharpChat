@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Jojo.Controllers
 {
@@ -148,6 +149,9 @@ namespace Jojo.Controllers
                         byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(user.Password));
                         user.Password = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
                     }
+
+                    user.BackgroundColor = "#007bff";
+
                     _context.Users.Add(user);
                     await _context.SaveChangesAsync();
 
@@ -213,14 +217,14 @@ namespace Jojo.Controllers
 
             return RedirectToAction("ChatList", new { username });
         }
-        public IActionResult NewsFeed(string username)
+        public async Task<IActionResult> NewsFeed(string username)
         {
             if (string.IsNullOrEmpty(username))
             {
                 return RedirectToAction("Login");
             }
 
-            var newsFeedItems = _context.NewsFeedItems.ToList();
+            var newsFeedItems = await _context.NewsFeedItems.ToListAsync();
 
             ViewBag.Username = username;
 
@@ -260,7 +264,8 @@ namespace Jojo.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("NewsFeed", new { username });
+            return Json(new { success = true });
+
         }
 
         [HttpPost]
@@ -296,6 +301,48 @@ namespace Jojo.Controllers
 
             return Ok();
         }
+        public IActionResult Profile(string username, string profilename)
+        {
+            ViewBag.Username = username;
 
+            var user = _context.Users.FirstOrDefault(u => u.Username == profilename);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.ViewingUser = profilename;
+            var userNewsItems = _context.NewsFeedItems.Where(n => n.Author == profilename).ToList();
+
+            ViewBag.UserNewsItems = userNewsItems;
+
+
+            return View(user);
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditProfile(string username, string profileDescription, IFormFile profilePhoto, string backgroundColor)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+
+            if (user != null)
+            {
+                user.ProfileDescription = profileDescription;
+
+                if (profilePhoto != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await profilePhoto.CopyToAsync(memoryStream);
+                        user.ProfilePhoto = memoryStream.ToArray();
+                        user.ProfilePhotoContentType = profilePhoto.ContentType;
+                    }
+                }
+                user.BackgroundColor = backgroundColor;
+
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Profile", new { username = username, profilename = username });
+        }
     }
 }
