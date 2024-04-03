@@ -35,10 +35,7 @@ namespace Jojo.Controllers
 
             ViewBag.Username = username;
 
-            // Получить все чаты
             var chats = _context.Chats.ToList();
-
-            // Фильтровать чаты, чтобы показывать только те, где пользователь участвует
             var userChats = chats.Where(c => c.AllowedUsers.Contains(username) || c.AllowedUsers.Contains("public")).ToList();
 
             ViewBag.Chats = userChats;
