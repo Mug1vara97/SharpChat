@@ -92,15 +92,35 @@
             word-wrap: break-word;
         }
         .list {
-            width: 1445px;
+            margin-top: 80px;
+            margin-right: 20px;
+            margin-left: 10px;
         }
 
+        .search-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #0056b3;
+            align-items: center;
+            z-index: 9999;
+            display: flex;
+        }
+        .search {
+            margin-left: 20px;
+            height: 15px;
+            width: 80%;
+        }
     </style>
     <link rel="stylesheet" href="~/css/theme.css">
 </head>
 <body>
-    <button onclick="openCreateChatModal()">Создать чат</button>
-
+    <div class="search-container">
+        <h4 class="name">@ViewBag.Username</h4>
+        <img src="~/css/plus.png" onclick="openCreateChatModal()" style="width: 26px; height: 26px; margin-left: 120px;"/>
+            <input class="search" type="text" id="searchChat" name="searchChat" oninput="searchChat()" />
+    </div>
     <div id="createChatModal" class="modal">
         <h1>Создание чата</h1>
         <form id="createChatForm" method="post">
@@ -219,6 +239,23 @@
                     userList.style.display = 'none';
                 }
             });
+        });
+
+            function searchChat() {
+                var input = document.getElementById('searchChat').value.toLowerCase();
+                var chats = document.querySelectorAll('.li');
+
+                chats.forEach(chat => {
+                    var chatName = chat.querySelector('.chat-button').innerText.toLowerCase();
+                    if (chatName.includes(input)) {
+                        chat.style.display = 'block';
+                    } else {
+                        chat.style.display = 'none';
+                    }
+                });
+            }
+        document.querySelector('.img-icon').addEventListener('click', function () {
+            document.getElementById('createChatModal').style.display = 'block';
         });
 
 

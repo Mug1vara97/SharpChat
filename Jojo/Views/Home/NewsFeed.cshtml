@@ -80,18 +80,6 @@
         }
 
 
-        .edit-button {
-            float: right;
-            margin-right: 10px;
-            margin-top: -10px;
-        }
-
-        .delete-button {
-            float: right;
-            margin-right: 10px;
-            margin-top: -10px;
-        }
-
         #createNewsButton {
             float: right;
             margin-right: 20px;
@@ -106,6 +94,47 @@
             display: block;
             margin: 0 auto;
         }
+
+        .search-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #0056b3;
+            align-items: center;
+            z-index: 9999;
+            display: flex;
+        }
+
+        .search {
+            margin-left: 20px;
+            height: 15px;
+            width: 80%;
+        }
+
+        .options-menu {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            padding: 5px;
+            border: 1px solid #ccc;
+            z-index: 9999;
+            width: 130px;
+            margin-top: -10px;
+        }
+
+            .edit-icon:hover + .options-menu,
+            .options-menu:hover {
+                display: block;
+                margin-top: -10px;
+            }
+
+        .zxc{
+            float: right;
+        }
+
+
+
     </style>
     <link rel="stylesheet" href="~/css/theme.css">
 </head>
@@ -113,11 +142,13 @@
 
     @model List<NewsFeedItem>
 
-    <h2>News Feed</h2>
+    <div class="search-container">
+        <h4 class="name">@ViewBag.Username</h4>
+        <img src="~/css/plus.png" onclick="openCreateNewsModal()" style="width: 26px; height: 26px; margin-left: 120px;" />
+        <input class="search" type="text" id="searchInput" placeholder="Поиск новостей..." oninput="searchNews()" />
+    </div>
 
-    <p>Welcome, @ViewBag.Username!  <button id="createNewsButton" onclick="openCreateNewsModal()">Создать новость</button></p>
-
-    <input type="text" id="searchInput" placeholder="Поиск новостей..." oninput="searchNews()">
+    <p style="margin-top: 80px;">Welcome, @ViewBag.Username!</p>
 
     @if (Model != null)
     {
@@ -125,7 +156,21 @@
             @foreach (var item in Model)
             {
                 <li>
-                    <h3>@item.Title</h3>
+                    <h3>
+                        @item.Title 
+                        <div class="zxc">
+                            @if (item.Author == ViewBag.Username)
+                            {
+                                <img src="~/css/3set.png" class="edit-icon" onmouseover="showEditOptions(this)" />
+                                <div class="options-menu">
+                                    <button class="delete-button" onclick="deleteNews(@item.Id)">Удалить</button>
+                                    <button class="edit-button" onclick="editNews(@item.Id)">Редактировать</button>
+                                </div>
+
+                            }
+                        </div>
+                        
+                    </h3>
                     @if (string.IsNullOrEmpty(item.ContentType))
                     {
                         <p class="content">@item.Content</p>
@@ -135,15 +180,31 @@
                         <img class="photo"src="data:@item.ContentType;base64,@Convert.ToBase64String(item.Photo)" alt="@item.Title" style="max-width: 90%;" />
                         <p class="content">@item.Content</p>
                     }
+                    @if (item.Comments != null)
+                    {
+                        <div>
+                            <h4>Comments:</h4>
+                            <ul>
+                                @foreach (var comment in item.Comments)
+                                {
+                                    <li>
+                                        <small>@comment.PostedDate.ToLocalTime() by @comment.Author</small>
+                                        <p>@comment.Content</p>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <form id="addCommentForm_@item.Id" onsubmit="addComment(@item.Id)">
+                        <input type="hidden" name="newsItemId" value="@item.Id" />
+                        <input type="hidden" name="username" value="@ViewBag.Username" />
+                        <input type="text" name="content" />
+                        <button type="submit">Add Comment</button>
+                    </form>
                     <small>
                         @item.PostedDate.ToLocalTime() @item.Author
                     </small>
-
-                    @if (item.Author == ViewBag.Username)
-                    {
-                        <button class="delete-button" onclick="deleteNews(@item.Id)">Удалить</button>
-                        <button class="edit-button" onclick="editNews(@item.Id)">Редактировать </button>
-                    }
                 </li>
             }
         </ul>
@@ -282,6 +343,47 @@
                 }
             });
         }
+        function showEditOptions(icon) {
+            var optionsMenu = icon.nextElementSibling;
+
+            optionsMenu.style.display = 'block';
+
+            function hideOptionsMenu() {
+                optionsMenu.style.display = 'none';
+            }
+
+            icon.addEventListener('mouseleave', hideOptionsMenu);
+
+            optionsMenu.addEventListener('mouseenter', function () {
+                optionsMenu.style.display = 'block';
+            });
+
+            optionsMenu.addEventListener('mouseleave', hideOptionsMenu);
+        }
+
+        function addComment(newsItemId) {
+            let formId = `addCommentForm_${newsItemId}`;
+            let form = document.getElementById(formId);
+            let formData = new FormData(form);
+
+            fetch('/Home/AddComment', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        fetch('/Home/NewsFeed?username=' + formData.get('username'))
+                            .then(response => response.text())
+                            .then(data => {
+                                document.body.innerHTML = data;
+                            });
+                    }
+                });
+
+            return false;
+        }
+
+
 
     </script>
 

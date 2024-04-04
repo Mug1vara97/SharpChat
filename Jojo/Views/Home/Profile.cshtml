@@ -54,11 +54,13 @@
         border: 3px solid #000;
     }
 
-    .container {
+    .zxc {
         height: 150px;
-        width: 100%;
-        border-bottom: 3px solid #000;
+        width: 99%;
+        border: 3px solid #000;
         background-color: @Model.BackgroundColor;
+        margin-top: 80px;
+        border-radius: 10px;
     }
 
     .none {
@@ -91,24 +93,55 @@
         margin-top: 100px;
     }
 
-    .edit-button {
-        float: right;
-        margin-right: 10px;
+
+    .options-menu {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #ccc;
+        z-index: 9999;
+        width: 130px;
         margin-top: -10px;
     }
 
-    .delete-button {
+        .edit-icon:hover + .options-menu,
+        .options-menu:hover {
+            display: block;
+            margin-top: -10px;
+        }
+
+    .aaa {
         float: right;
-        margin-right: 10px;
-        margin-top: -10px;
     }
+
+    .search-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #0056b3;
+        align-items: center;
+        z-index: 9999;
+        display: flex;
+    }
+
+    .search {
+        margin-left: 20px;
+        height: 15px;
+        width: 80%;
+    }
+
 
 </style>
 <link rel="stylesheet" href="~/css/theme.css">
 
 @model Jojo.Models.User
 <div>
-    <div class="container" style="background-color: @Model.BackgroundColor; width: 100%;">
+    <div class="search-container">
+        <h4 class="name">@ViewBag.Username</h4>
+    </div>
+    <div class="zxc" style="background-color: @Model.BackgroundColor;">
 
         @if (Model.ProfilePhoto != null)
         {
@@ -169,11 +202,17 @@
             <li>
                 <h3>
                     @item.Title
-                    @if (item.Author == ViewBag.Username)
-                    {
-                        <button class="delete-button" onclick="deleteNews(@item.Id)">Удалить</button>
-                        <button class="edit-button" onclick="editNews(@item.Id)">Редактировать </button>
-                    }
+                    <div class="aaa">
+                        @if (item.Author == ViewBag.Username)
+                        {
+                            <img src="~/css/3set.png" class="edit-icon" onmouseover="showEditOptions(this)" />
+                            <div class="options-menu">
+                                <button class="delete-button" onclick="deleteNews(@item.Id)">Удалить</button>
+                                <button class="edit-button" onclick="editNews(@item.Id)">Редактировать</button>
+                            </div>
+
+                        }
+                    </div>
                 </h3>
                 @if (string.IsNullOrEmpty(item.ContentType))
                 {
@@ -304,6 +343,23 @@
             document.getElementById('editNewsModal').style.display = 'none';
         }
     });
+    function showEditOptions(icon) {
+        var optionsMenu = icon.nextElementSibling;
+
+        optionsMenu.style.display = 'block';
+
+        function hideOptionsMenu() {
+            optionsMenu.style.display = 'none';
+        }
+
+        icon.addEventListener('mouseleave', hideOptionsMenu);
+
+        optionsMenu.addEventListener('mouseenter', function () {
+            optionsMenu.style.display = 'block';
+        });
+
+        optionsMenu.addEventListener('mouseleave', hideOptionsMenu);
+    }
 </script>
 
 

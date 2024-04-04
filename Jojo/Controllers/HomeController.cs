@@ -176,7 +176,7 @@ namespace Jojo.Controllers
 
                     if (user.Password == hashedPassword)
                     {
-                        return RedirectToAction("ChatList", new { username = user.Username });
+                        return RedirectToAction("NewsFeed", new { username = user.Username });
                     }
                 }
             }
@@ -185,7 +185,7 @@ namespace Jojo.Controllers
         public IActionResult UsersList(string username)
         {
             ViewBag.Username = username;
-            var users = _context.Users.ToList();
+            var users = _context.Users.OrderBy(u => u.Username).ToList();
             return View(users);
         }
         [HttpPost]
@@ -221,7 +221,8 @@ namespace Jojo.Controllers
                 return RedirectToAction("Login");
             }
 
-            var newsFeedItems = await _context.NewsFeedItems.ToListAsync();
+            var newsFeedItems = await _context.NewsFeedItems.Include(n => n.Comments).ToListAsync();
+
 
             ViewBag.Username = username;
 
@@ -341,5 +342,30 @@ namespace Jojo.Controllers
 
             return RedirectToAction("Profile", new { username = username, profilename = username });
         }
+        [HttpPost]
+        public async Task<IActionResult> AddComment(int newsItemId, string username, string content)
+        {
+            var newsItem = _context.NewsFeedItems.Include(n => n.Comments).FirstOrDefault(n => n.Id == newsItemId);
+
+            if (newsItem != null)
+            {
+                var comment = new Comment
+                {
+                    NewsFeedItemId = newsItemId,
+                    Author = username,
+                    Content = content,
+                    PostedDate = DateTime.UtcNow
+                };
+
+                newsItem.Comments.Add(comment);
+
+                await _context.SaveChangesAsync();
+            }
+
+            // Возвращаем JSON с успешным результатом
+            return Json(new { success = true });
+        }
+
+
     }
 }

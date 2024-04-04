@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Jojo.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jojo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240403204627_Onenт")]
+    partial class Onenт
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,13 +196,11 @@ namespace Jojo.Migrations
 
             modelBuilder.Entity("Comment", b =>
                 {
-                    b.HasOne("NewsFeedItem", "NewsFeedItem")
+                    b.HasOne("NewsFeedItem", null)
                         .WithMany("Comments")
                         .HasForeignKey("NewsFeedItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("NewsFeedItem");
                 });
 
             modelBuilder.Entity("Jojo.Models.ChatMessage", b =>

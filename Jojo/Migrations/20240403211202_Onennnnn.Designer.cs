@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Jojo.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jojo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240403211202_Onennnnn")]
+    partial class Onennnnn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,6 +161,28 @@ namespace Jojo.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Like", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("NewsFeedItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NewsFeedItemId");
+
+                    b.ToTable("Like");
+                });
+
             modelBuilder.Entity("NewsFeedItem", b =>
                 {
                     b.Property<int>("Id")
@@ -213,6 +238,15 @@ namespace Jojo.Migrations
                     b.Navigation("Chat");
                 });
 
+            modelBuilder.Entity("Like", b =>
+                {
+                    b.HasOne("NewsFeedItem", null)
+                        .WithMany("Likes")
+                        .HasForeignKey("NewsFeedItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Chat", b =>
                 {
                     b.Navigation("Messages");
@@ -221,6 +255,8 @@ namespace Jojo.Migrations
             modelBuilder.Entity("NewsFeedItem", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
         }

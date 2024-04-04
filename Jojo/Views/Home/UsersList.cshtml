@@ -21,18 +21,10 @@
         border-radius: 3px;
     }
 
-    .search {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-sizing: border-box;
-    }
-
     ul {
         list-style-type: none;
         padding: 0;
+        margin-top: 80px;
     }
 
     li {
@@ -48,11 +40,31 @@
         a:hover {
             text-decoration: underline;
         }
+
+    .search-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #0056b3;
+        align-items: center;
+        z-index: 9999;
+        display: flex;
+    }
+
+    .search {
+        margin-left: 20px;
+        height: 15px;
+        width: 80%;
+    }
 </style>
 <div>
-    <h1>Список пользователей</h1>
+    <div class="search-container">
+        <h4 class="name">@ViewBag.Username</h4>
+        <div style="width: 26px; height: 26px; margin-left: 120px;" ></div>
+        <input class="search" type="text" id="searchInput" placeholder="Поиск по пользователям..." />
+    </div>
 
-    <input class="search" type="text" id="searchInput" placeholder="Поиск по пользователям...">
     <ul id="userList">
         @foreach (var user in Model)
         {
