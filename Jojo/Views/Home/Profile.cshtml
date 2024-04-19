@@ -1,137 +1,148 @@
-﻿
-<style>
-    button {
-        background-color: #007bff;
-        color: #fff;
-        padding: 5px 10px;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-    }
+﻿﻿<style>
+     button {
+         background-color: #007bff;
+         color: #fff;
+         padding: 5px 10px;
+         border: none;
+         border-radius: 3px;
+         cursor: pointer;
+     }
 
-        button:hover {
-            background-color: #0056b3;
-        }
+         button:hover {
+             background-color: #0056b3;
+         }
 
-    input, textarea {
-        width: 100%;
-        padding: 5px;
-        margin: 5px 0;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-    }
+     input,
+     textarea {
+         width: 100%;
+         padding: 5px;
+         margin: 5px 0;
+         border: 1px solid #ccc;
+         border-radius: 3px;
+     }
 
-    .profile-news-feed {
-        list-style-type: none;
-        padding: 0;
-    }
+     .profile-news-feed {
+         list-style-type: none;
+         padding: 0;
+         z-index: 1;
+     }
 
-        .profile-news-feed li {
-            background-color: #fff;
-            padding: 10px;
-            margin: 10px 10px 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-left: 130px;
-            margin-right: 130px;
-        }
+         .profile-news-feed li {
+             background-color: #fff;
+             padding: 10px;
+             margin: 10px 10px 10px 0;
+             border: 1px solid #ccc;
+             border-radius: 5px;
+             margin-left: 130px;
+             margin-right: 130px;
+             z-index: 1;
+         }
 
-        .profile-news-feed h3 {
-            color: #333;
-        }
+         .profile-news-feed h3 {
+             color: #333;
+             z-index: 1;
+         }
 
-        .profile-news-feed small {
-            color: #888;
-        }
+         .profile-news-feed small {
+             color: #888;
+             z-index: 1;
+         }
 
-    .profile-photo {
-        width: 170px;
-        height: 170px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-top: 60px;
-        margin-left: 30px;
-        border: 3px solid #000;
-    }
+     .profile-photo {
+         width: 170px;
+         height: 170px;
+         border-radius: 50%;
+         object-fit: cover;
+         margin-top: 60px;
+         margin-left: 30px;
+         border: 3px solid #000;
+         z-index: 9999;
+     }
 
-    .zxc {
-        height: 150px;
-        width: 99%;
-        border: 3px solid #000;
-        background-color: @Model.BackgroundColor;
-        margin-top: 80px;
-        border-radius: 10px;
-    }
+     .zxc {
+         height: 150px;
+         width: 99%;
+         border: 3px solid #000;
+         background-color: @Model.BackgroundColor;
+         margin-top: 80px;
+         border-radius: 10px;
+         z-index: 9999;
+     }
 
-    .none {
-        margin-top: 100px;
-    }
+     .none {
+         margin-top: 100px;
+     }
 
-    .test {
-        width: 600px;
-    }
+     .test {
+         width: 600px;
+     }
 
-    .modal {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 5px;
-        z-index: 9999;
-    }
+     .modal {
+         position: fixed;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         background-color: #fff;
+         padding: 20px;
+         border-radius: 5px;
+         z-index: 9999;
+     }
 
-    .profile {
-        background-color: #fff;
-        padding: 10px;
-        margin: 10px 10px 10px 0;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-left: 130px;
-        margin-right: 130px;
-        margin-top: 100px;
-    }
+     .profile {
+         background-color: #fff;
+         padding: 10px;
+         margin: 10px 10px 10px 0;
+         border: 1px solid #ccc;
+         border-radius: 5px;
+         margin-left: 130px;
+         margin-right: 130px;
+     }
 
+     .options-menu {
+         display: none;
+         position: absolute;
+         background-color: #fff;
+         padding: 5px;
+         border: 1px solid #ccc;
+         z-index: 9999;
+         width: 130px;
+         margin-top: -10px;
+     }
 
-    .options-menu {
-        display: none;
-        position: absolute;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #ccc;
-        z-index: 9999;
-        width: 130px;
-        margin-top: -10px;
-    }
+         .edit-icon:hover + .options-menu,
+         .options-menu:hover {
+             display: block;
+             margin-top: -10px;
+         }
 
-        .edit-icon:hover + .options-menu,
-        .options-menu:hover {
-            display: block;
-            margin-top: -10px;
-        }
+     .aaa {
+         float: right;
+     }
 
-    .aaa {
-        float: right;
-    }
+     .search-container {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         background-color: #0056b3;
+         align-items: center;
+         z-index: 9999;
+         display: flex;
+     }
 
-    .search-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background-color: #0056b3;
-        align-items: center;
-        z-index: 9999;
-        display: flex;
-    }
+     .search {
+         margin-left: 20px;
+         height: 15px;
+         width: 80%;
+     }
 
-    .search {
-        margin-left: 20px;
-        height: 15px;
-        width: 80%;
-    }
-
+     .scroll-container {
+         height: calc(100vh - 338px);
+         overflow: auto;
+         position: relative;
+         z-index: 1;
+         margin-top: 100px;
+     }
 
 </style>
 <link rel="stylesheet" href="~/css/theme.css">
@@ -141,7 +152,7 @@
     <div class="search-container">
         <h4 class="name">@ViewBag.Username</h4>
     </div>
-    <div class="zxc" style="background-color: @Model.BackgroundColor;">
+    <div class="zxc" style="background-color: @Model.BackgroundColor; z-index: 9999;">
 
         @if (Model.ProfilePhoto != null)
         {
@@ -149,12 +160,12 @@
         }
         else
         {
-            <div class="profile-photo" style="background-color: white;">
+            <div class="profile-photo" style="background-color: white; z-index: 9999;">
             </div>
         }
     </div>
 
-    <p style="float: right; margin-top: -140px; margin-right: 20px;">
+    <p style="float: right; margin-top: -140px; margin-right: 20px; z-index: 2;">
         @if (ViewBag.Username == ViewBag.ViewingUser)
         {
             <img src="~/css/zxc.png" alt="Edit Profile" onclick="openEditProfileModal()" style="cursor: pointer;" />
@@ -167,96 +178,158 @@
             <button onclick="openCreateNewsModal()">Создать новость</button>
         }
     </p>
+    <div class="scroll-container">
 
-    <div class="profile">
-        <h1>@Model.Username's Profile</h1>
+        <div class="profile">
+            <h1>@Model.Username's Profile</h1>
 
-        <p>@Model.Username</p>
-        <p>@Model.Email</p>
-        <h3 style="border-bottom: 2px solid #000;">Обо мне</h3>
-        <p>@Model.ProfileDescription</p>
-    </div>
+            <p>@Model.Username</p>
+            <p>@Model.Email</p>
+            <h3 style="border-bottom: 2px solid #000;">Обо мне</h3>
+            <p>@Model.ProfileDescription</p>
+            <h2>Друзья пользователя</h2>
+            <ul>
+                @foreach (var friend in ViewBag.Friends)
+                {
+                    @if (friend.User1 != ViewBag.ViewingUser)
+                    {
+                        <li>@friend.User1</li>
+                    }
+                    else if (friend.User2 != ViewBag.ViewingUser)
+                    {
+                        <li>@friend.User2</li>
+                    }
+                }
+            </ul>
 
+        </div>
 
-    @if (ViewBag.Username == ViewBag.ViewingUser)
-    {
-        <div id="editProfileModal" class="modal" style="display: none;">
-            <h1>Edit Profile</h1>
-            <form method="post" action="/Home/EditProfile" enctype="multipart/form-data" class="test">
+        @if (ViewBag.Username == ViewBag.ViewingUser)
+        {
+            <div id="editProfileModal" class="modal" style="display: none;">
+                <h1>Edit Profile</h1>
+                <form method="post" action="/Home/EditProfile" enctype="multipart/form-data" class="test">
+                    <input type="hidden" name="username" value="@ViewBag.Username" />
+                    <label>Profile Description:</label><br />
+                    <textarea name="profileDescription">@Model.ProfileDescription</textarea><br />
+                    <label>Profile Photo:</label><br />
+                    <input type="file" name="profilePhoto" accept="image/*" onchange="previewProfilePhoto(event)" /><br />
+                    <label for="backgroundColor">Background Color:</label><br />
+                    <input type="color" name="backgroundColor" value="@Model.BackgroundColor" /><br />
+                    <button type="submit">Сохранить профиль</button>
+                </form>
+            </div>
+            <h2>Запросы на добавление в друзья</h2>
+            <ul>
+                @if (ViewBag.FriendshipRequests != null)
+                {
+                    @foreach (var request in ViewBag.FriendshipRequests)
+                    {
+                        <li>
+                            <p>@request.FromUser хочет добавить вас в друзья</p>
+                            @if (!request.IsAccepted)
+                            {
+                                <form method="post" action="/Home/AcceptFriendRequest">
+                                    <input type="hidden" name="requestId" value="@request.Id" />
+                                    <button type="button" onclick="acceptFriendRequest(@request.Id)">Принять запрос</button>
+                                </form>
+                                <form method="post" action="/Home/RejectFriendRequest">
+                                    <input type="hidden" name="requestId" value="@request.Id" />
+                                    <button type="submit">Отклонить запрос</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <p>Запрос принят</p>
+                            }
+                        </li>
+                    }
+                }
+            </ul>
+        }
+
+        @if (ViewBag.Username != ViewBag.ViewingUser)
+        {
+            @if (ViewBag.IsFriend)
+            {
+                <form method="post" action="/Home/RemoveFriend">
+                    <input type="hidden" name="username" value="@ViewBag.Username" />
+                    <input type="hidden" name="friendUsername" value="@ViewBag.ViewingUser" />
+                    <button type="submit">Удалить из друзей</button>
+                </form>
+            }
+            else
+            {
+                <form id="sendFriendRequestForm">
+                    <input type="hidden" name="fromUser" value="@ViewBag.Username" />
+                    <input type="hidden" name="toUser" value="@ViewBag.ViewingUser" />
+                    <button type="button" onclick="sendFriendRequest()">Добавить в друзья</button>
+                </form>
+            }
+        }
+
+        @foreach (var item in ViewBag.UserNewsItems)
+        {
+            <ul class="profile-news-feed">
+                <li>
+                    <h3>
+                        @item.Title
+                        <div class="aaa">
+                            @if (item.Author == ViewBag.Username)
+                            {
+                                <img src="~/css/3set.png" class="edit-icon" onmouseover="showEditOptions(this)" />
+                                <div class="options-menu">
+                                    <button class="delete-button" onclick="deleteNews(@item.Id)">Удалить</button>
+                                    <button class="edit-button" onclick="editNews(@item.Id)">Редактировать</button>
+                                </div>
+                            }
+                        </div>
+                    </h3>
+                    @if (string.IsNullOrEmpty(item.ContentType))
+                    {
+                        <p class="content">@item.Content</p>
+                    }
+                    else
+                    {
+                        <img class="photo" src="data:@item.ContentType;base64,@Convert.ToBase64String(item.Photo)" alt="@item.Title" style="max-width: 90%;" />
+                        <p class="content">@item.Content</p>
+                    }
+                    <small>
+                        <small>@item.PostedDate.ToLocalTime()</small>
+                    </small>
+                </li>
+            </ul>
+
+        }
+        <div id="createNewsModal" class="modal" style="display: none;">
+            <h1>Создание новости</h1>
+            <form id="createNewsForm" method="post" action="/Home/CreateNews">
                 <input type="hidden" name="username" value="@ViewBag.Username" />
-                <label>Profile Description:</label><br />
-                <textarea name="profileDescription">@Model.ProfileDescription</textarea><br />
-                <label>Profile Photo:</label><br />
-                <input type="file" name="profilePhoto" accept="image/*" /><br />
-                <label for="backgroundColor">Background Color:</label><br />
-                <input type="color" name="backgroundColor" value="@Model.BackgroundColor" /><br />
-                <button type="submit">Сохранить профиль</button>
+                <label>Title:</label><br />
+                <input type="text" name="title" /><br />
+                <label>Content:</label><br />
+                <textarea name="content"></textarea><br />
+                <label>Photo:</label><br />
+                <input type="file" name="photo" accept="image/*" onchange="previewPhoto(event)" /><br />
+                <img id="photoPreview" src="#" alt="Photo Preview" style="display:none; height:100px;" /><br />
+                <button type="submit">Create News</button>
             </form>
         </div>
-    }
-
-
-    @foreach (var item in ViewBag.UserNewsItems)
-    {
-        <ul class="profile-news-feed">
-            <li>
-                <h3>
-                    @item.Title
-                    <div class="aaa">
-                        @if (item.Author == ViewBag.Username)
-                        {
-                            <img src="~/css/3set.png" class="edit-icon" onmouseover="showEditOptions(this)" />
-                            <div class="options-menu">
-                                <button class="delete-button" onclick="deleteNews(@item.Id)">Удалить</button>
-                                <button class="edit-button" onclick="editNews(@item.Id)">Редактировать</button>
-                            </div>
-
-                        }
-                    </div>
-                </h3>
-                @if (string.IsNullOrEmpty(item.ContentType))
-                {
-                    <p class="content">@item.Content</p>
-                }
-                else
-                {
-                    <img class="photo" src="data:@item.ContentType;base64,@Convert.ToBase64String(item.Photo)" alt="@item.Title" style="max-width: 90%;" />
-                    <p class="content">@item.Content</p>
-                }
-                <small>
-                    <small>@item.PostedDate.ToLocalTime()</small>
-                </small>
-            </li>
-        </ul>
-
-    }
-    <div id="createNewsModal" class="modal" style="display: none;">
-        <h1>Создание новости</h1>
-        <form id="createNewsForm" method="post" action="/Home/CreateNews">
-            <input type="hidden" name="username" value="@ViewBag.Username" />
-            <label>Title:</label><br />
-            <input type="text" name="title" /><br />
-            <label>Content:</label><br />
-            <textarea name="content"></textarea><br />
-            <label>Photo:</label><br />
-            <input type="file" name="photo" accept="image/*" onchange="previewPhoto(event)" /><br />
-            <img id="photoPreview" src="#" alt="Photo Preview" style="display:none; height:100px;" /><br />
-            <button type="submit">Create News</button>
-        </form>
-    </div>
-    <div id="editNewsModal" class="modal" style="display: none;">
-        <h1>Редактирование новости</h1>
-        <form id="editNewsForm" method="post" action="/Home/EditNews">
-            <input type="hidden" name="newsId" id="editNewsId" />
-            <input type="hidden" name="username" value="@ViewBag.Username" />
-            <label>Title:</label><br />
-            <input type="text" name="title" id="editNewsTitle" /><br />
-            <label>Content:</label><br />
-            <textarea name="content" id="editNewsContent"></textarea><br />
-            <button type="submit">Save News</button>
-        </form>
+        <div id="editNewsModal" class="modal" style="display: none;">
+            <h1>Редактирование новости</h1>
+            <form id="editNewsForm" method="post" action="/Home/EditNews">
+                <input type="hidden" name="newsId" id="editNewsId" />
+                <input type="hidden" name="username" value="@ViewBag.Username" />
+                <label>Title:</label><br />
+                <input type="text" name="title" id="editNewsTitle" /><br />
+                <label>Content:</label><br />
+                <textarea name="content" id="editNewsContent"></textarea><br />
+                <button type="submit">Save News</button>
+            </form>
+        </div>
     </div>
 </div>
+
 <script src="/js/theme.js"></script>
 <script>
     function openCreateNewsModal() {
@@ -309,6 +382,7 @@
                 window.location.reload();
             });
     }
+
     function editNews(newsItemId) {
         fetch('/Home/GetNews?id=' + newsItemId)
             .then(response => response.json())
@@ -343,6 +417,7 @@
             document.getElementById('editNewsModal').style.display = 'none';
         }
     });
+
     function showEditOptions(icon) {
         var optionsMenu = icon.nextElementSibling;
 
@@ -360,6 +435,33 @@
 
         optionsMenu.addEventListener('mouseleave', hideOptionsMenu);
     }
+
+    function sendFriendRequest() {
+        let formData = new FormData(document.getElementById('sendFriendRequestForm'));
+
+        fetch('/Home/SendFriendRequest', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                } else {
+                    alert('Failed to send friend request');
+                }
+            });
+    }
+    function acceptFriendRequest(requestId) {
+        fetch('/Home/AcceptFriendRequest?requestId=' + requestId, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to accept friend request');
+                }
+            });
+    }
+
+
 </script>
-
-

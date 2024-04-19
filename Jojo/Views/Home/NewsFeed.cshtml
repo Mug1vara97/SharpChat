@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿﻿
+<!DOCTYPE html>
 <html>
 <head>
     <title>News Feed</title>
@@ -36,7 +37,7 @@
             list-style-type: none;
             padding: 0;
             height: calc(85vh - 20px);
-            overflow-y: auto; 
+            overflow-y: auto;
             overflow-x: hidden;
         }
 
@@ -129,11 +130,9 @@
                 margin-top: -10px;
             }
 
-        .zxc{
+        .zxc {
             float: right;
         }
-
-
 
     </style>
     <link rel="stylesheet" href="~/css/theme.css">
@@ -157,7 +156,7 @@
             {
                 <li>
                     <h3>
-                        @item.Title 
+                        @item.Title
                         <div class="zxc">
                             @if (item.Author == ViewBag.Username)
                             {
@@ -169,7 +168,16 @@
 
                             }
                         </div>
-                        
+                        @if (item.Likes.Any(l => l.Username == ViewBag.Username))
+                        {
+                            <button class="unlike-button" onclick="unlikeNews(@item.Id)" data-newsItemId="@item.Id">Unlike</button>
+                        }
+                        else
+                        {
+                            <button class="like-button" onclick="likeNews(@item.Id)" data-newsItemId="@item.Id">Like</button>
+                        }
+                        <span id="likesCount_@item.Id">@item.Likes.Count</span>
+
                     </h3>
                     @if (string.IsNullOrEmpty(item.ContentType))
                     {
@@ -177,7 +185,7 @@
                     }
                     else
                     {
-                        <img class="photo"src="data:@item.ContentType;base64,@Convert.ToBase64String(item.Photo)" alt="@item.Title" style="max-width: 90%;" />
+                        <img class="photo" src="data:@item.ContentType;base64,@Convert.ToBase64String(item.Photo)" alt="@item.Title" style="max-width: 90%;" />
                         <p class="content">@item.Content</p>
                     }
                     @if (item.Comments != null)
@@ -214,7 +222,7 @@
         <p>No news feed items available</p>
     }
 
-   
+
 
     <div id="createNewsModal" class="modal" style="display: none;">
         <h1>Создание новости</h1>
@@ -384,6 +392,55 @@
         }
 
 
+        function likeNews(newsItemId) {
+            let formData = new FormData();
+            formData.append('newsItemId', newsItemId);
+            formData.append('username', '@ViewBag.Username');
+
+            fetch('/Home/LikeNews', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        let likesCountElement = document.getElementById(`likesCount_${newsItemId}`);
+                        let currentLikes = parseInt(likesCountElement.innerText);
+                        let newLikes = currentLikes + 1;
+                        likesCountElement.innerText = newLikes;
+
+                        let likeButton = document.querySelector(`button[data-newsItemId="${newsItemId}"]`);
+                        likeButton.innerText = "Unlike";
+                        likeButton.classList.remove('like-button');
+                        likeButton.classList.add('unlike-button');
+                        likeButton.setAttribute('onclick', `unlikeNews(${newsItemId})`);
+                    }
+                });
+        }
+
+        function unlikeNews(newsItemId) {
+            let formData = new FormData();
+            formData.append('newsItemId', newsItemId);
+            formData.append('username', '@ViewBag.Username');
+
+            fetch('/Home/UnlikeNews', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        let likesCountElement = document.getElementById(`likesCount_${newsItemId}`);
+                        let currentLikes = parseInt(likesCountElement.innerText);
+                        let newLikes = currentLikes - 1;
+                        likesCountElement.innerText = newLikes;
+
+                        let unlikeButton = document.querySelector(`button[data-newsItemId="${newsItemId}"]`);
+                        unlikeButton.innerText = "Like";
+                        unlikeButton.classList.remove('unlike-button');
+                        unlikeButton.classList.add('like-button');
+                        unlikeButton.setAttribute('onclick', `likeNews(${newsItemId})`);
+                    }
+                });
+        }
 
     </script>
 

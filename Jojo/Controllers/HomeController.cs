@@ -39,7 +39,6 @@ namespace Jojo.Controllers
             var userChats = chats.Where(c => c.AllowedUsers.Contains(username) || c.AllowedUsers.Contains("public")).ToList();
 
             ViewBag.Chats = userChats;
-            ViewBag.UnreadMessageCounts = GetUnreadMessageCount(username);
 
             return View();
         }
