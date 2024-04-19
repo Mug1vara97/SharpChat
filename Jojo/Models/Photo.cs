@@ -1,13 +1,12 @@
 ﻿namespace Jojo.Models
 {
-    public class ChatMessage
+    public class ChatPhoto
     {
         public int Id { get; set; }
-        public string Message { get; set; }
+        public string PhotoData { get; set; }
         public string Username { get; set; }
         public DateTime Time { get; set; }
         public int ChatId { get; set; }
-        public bool IsRead { get; set; }
 
         public Chat Chat { get; set; }
     }

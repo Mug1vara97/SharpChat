@@ -13,5 +13,16 @@ namespace Jojo.Models
         public DbSet<User> Users { get; set; }
         public DbSet<NewsFeedItem> NewsFeedItems { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Friendship> Friends { get; set; }
+        public DbSet<ChatPhoto> ChatPhotos { get; set; }
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<FriendshipRequest> FriendshipRequests { get; set; }
+        public DbSet<UnreadMessageCount> UnreadMessageCounts { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Friendship>()
+                .HasIndex(f => new { f.User1, f.User2 }).IsUnique();
+        }
     }
 }

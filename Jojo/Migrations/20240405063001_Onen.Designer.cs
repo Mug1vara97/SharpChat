@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Jojo.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jojo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240405063001_Onen")]
+    partial class Onen
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,30 +84,6 @@ namespace Jojo.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Friendship", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("User1")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("User2")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("User1", "User2")
-                        .IsUnique();
-
-                    b.ToTable("Friends");
-                });
-
             modelBuilder.Entity("Jojo.Models.ChatMessage", b =>
                 {
                     b.Property<int>("Id")
@@ -115,9 +94,6 @@ namespace Jojo.Migrations
 
                     b.Property<int>("ChatId")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -135,78 +111,6 @@ namespace Jojo.Migrations
                     b.HasIndex("ChatId");
 
                     b.ToTable("ChatMessages");
-                });
-
-            modelBuilder.Entity("Jojo.Models.ChatPhoto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ChatId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("PhotoData")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
-
-                    b.ToTable("ChatPhotos");
-                });
-
-            modelBuilder.Entity("Jojo.Models.FriendshipRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FromUser")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsAccepted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("ToUser")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FriendshipRequests");
-                });
-
-            modelBuilder.Entity("Jojo.Models.UnreadMessageCount", b =>
-                {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
-
-                    b.Property<int>("ChatId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Count")
-                        .HasColumnType("integer");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("UnreadMessageCounts");
                 });
 
             modelBuilder.Entity("Jojo.Models.User", b =>
@@ -269,13 +173,14 @@ namespace Jojo.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Username")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NewsFeedItemId");
 
-                    b.ToTable("Likes");
+                    b.ToTable("Like");
                 });
 
             modelBuilder.Entity("NewsFeedItem", b =>
@@ -333,26 +238,13 @@ namespace Jojo.Migrations
                     b.Navigation("Chat");
                 });
 
-            modelBuilder.Entity("Jojo.Models.ChatPhoto", b =>
-                {
-                    b.HasOne("Chat", "Chat")
-                        .WithMany()
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Chat");
-                });
-
             modelBuilder.Entity("Like", b =>
                 {
-                    b.HasOne("NewsFeedItem", "NewsFeedItem")
+                    b.HasOne("NewsFeedItem", null)
                         .WithMany("Likes")
                         .HasForeignKey("NewsFeedItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("NewsFeedItem");
                 });
 
             modelBuilder.Entity("Chat", b =>

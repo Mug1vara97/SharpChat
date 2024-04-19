@@ -7,5 +7,7 @@
     public string? ContentType { get; set; }
     public DateTime PostedDate { get; set; }
     public string Author { get; set; }
-    public List<Comment> Comments { get; set; }
+    public List<Comment>? Comments { get; set; }
+    public List<Like>? Likes { get; set; }
+
 }

@@ -146,9 +146,12 @@
     <ul class="list">
         @foreach (var chat in ViewBag.Chats)
         {
+            var unreadMessageCounts = (List<UnreadMessageCount>)ViewBag.UnreadMessageCounts;
+
             <li class="li">
                 <a class="chat-button" href="/Home/Chat?username=@ViewBag.Username&chatId=@chat.Id">@chat.Name</a>
                 <p class="lip">@chat.Description</p>
+                <label>Unread Messages Count: @(unreadMessageCounts.FirstOrDefault(u => u.ChatId == chat.Id)?.Count)</label>
                 @if (chat.CreatedBy == ViewBag.Username)
                 {
                     @if (!chat.AllowedUsers.Contains("public"))

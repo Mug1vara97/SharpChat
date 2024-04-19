@@ -88,6 +88,12 @@
             margin-right: 30px;
         }
 
+        .photo-message {
+            max-width: 100%;
+            height: auto;
+        }
+
+
 
     </style>
     <link rel="stylesheet" href="~/css/theme.css">
@@ -103,6 +109,9 @@
     <div class="input-container">
         <input type="text" id="message" /><br /><br />
         <input type="button" id="sendBtn" value="Отправить" disabled="disabled" />
+        <input type="file" id="photo" accept="image/**" />
+        <button id="sendPhotoBtn">Отправить фото</button>
+
     </div>
     <div id="chatroom"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
@@ -134,6 +143,32 @@
                     });
             }
         });
+
+        document.getElementById("sendPhotoBtn").addEventListener("click", function () {
+            const fileInput = document.getElementById("photo");
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const photoData = e.target.result.split(",")[1]; // Получаем базовую64 закодированное изображение
+
+                const chatId = @ViewBag.ChatId;
+
+                hubConnection.invoke("SendPhoto", photoData, username, chatId)
+                    .then(function () {
+                        // Опционально: можно добавить сообщение об успешной отправке фото
+                    })
+                    .catch(function (err) {
+                        return console.error(err.toString());
+                    });
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        });
+
+
 
 
         hubConnection.on("Receive", function (message, username, time) {
@@ -169,15 +204,53 @@
 
             const chatroom = document.getElementById("chatroom");
             chatroom.appendChild(messageElem);
+            hubConnection.invoke("MarkMessagesAsRead", @ViewBag.ChatId, '@ViewBag.Username');
         });
+        hubConnection.on("ReceivePhoto", function (photoData, username, time) {
+            const messageElem = document.createElement("div");
+            if (username !== '@ViewBag.Username') {
+                messageElem.classList.add("other-message");
+            } else {
+                messageElem.classList.add("message");
+            }
+
+            const usernameElem = document.createElement("span");
+            usernameElem.classList.add("username");
+            usernameElem.textContent = username;
+
+            const br1 = document.createElement("br");
+
+            const photoElem = document.createElement("img");
+            photoElem.src = "data:image/jpeg;base64," + photoData;
+            photoElem.classList.add("photo-message");
+
+            const br2 = document.createElement("br");
+
+            const timeElem = document.createElement("span");
+            timeElem.classList.add("time");
+            const localTime = new Date(time);
+            timeElem.textContent = localTime.toLocaleTimeString();
+
+            messageElem.appendChild(usernameElem);
+            messageElem.appendChild(br1);
+            messageElem.appendChild(photoElem);
+            messageElem.appendChild(br2);
+            messageElem.appendChild(timeElem);
+
+            const chatroom = document.getElementById("chatroom");
+            chatroom.appendChild(messageElem);
+        });
+
 
 
         hubConnection.start()
             .then(function () {
                 document.getElementById("sendBtn").disabled = false;
                 hubConnection.invoke("GetChatMessages", @ViewBag.ChatId);
+                hubConnection.invoke("GetChatPhotos", @ViewBag.ChatId);
 
                 hubConnection.invoke("JoinChatGroup", @ViewBag.ChatId);
+                
             })
             .catch(function (err) {
                 return console.error(err.toString());

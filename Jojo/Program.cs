@@ -11,6 +11,11 @@ builder.Services.AddSignalR();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
+builder.Services.AddSignalR(options =>
+{
+    options.MaximumReceiveMessageSize = 52428800;
+});
+
 
 var app = builder.Build();
 
