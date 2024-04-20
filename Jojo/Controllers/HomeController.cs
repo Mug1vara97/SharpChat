@@ -232,6 +232,10 @@ namespace Jojo.Controllers
 
 
             ViewBag.Username = username;
+            var chats = _context.Chats.ToList();
+            var userChats = chats.Where(c => c.AllowedUsers.Contains(username) || c.AllowedUsers.Contains("public")).ToList();
+
+            ViewBag.Chats = userChats;
 
             return View(newsFeedItems);
         }

@@ -168,6 +168,21 @@
 
                             }
                         </div>
+                        <button class="repost-button" onclick="openRepostModal(@item.Id)">Repost</button>
+                        <input type="hidden" id="repostNewsId" value="0" />
+
+                        <div id="repostModal" class="modal" style="display: none;">
+                            <h1>Выберите чат для репоста новости</h1>
+                            <ul>
+                                @foreach (var chat in ViewBag.Chats)
+                                {
+                                    <li>
+                                        <button class="repost-chat-button" onclick="repostToChat(@chat.Id)">Repost to @chat.Name</button>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
                         @if (item.Likes.Any(l => l.Username == ViewBag.Username))
                         {
                             <button class="unlike-button" onclick="unlikeNews(@item.Id)" data-newsItemId="@item.Id">Unlike</button>
@@ -441,6 +456,22 @@
                     }
                 });
         }
+        function openRepostModal(newsId) {
+            document.getElementById('repostNewsId').value = newsId;
+            document.getElementById('repostModal').style.display = 'block';
+        }
+
+        function repostToChat(chatId) {
+            // Получаем ID новости для репоста
+            let newsId = document.getElementById('repostNewsId').value;
+
+            // Выполняем логику репоста новости в выбранный чат
+            // Тут можно отправить AJAX-запрос на сервер для добавления новости в выбранный чат
+
+            // Закрываем модальное окно
+            document.getElementById('repostModal').style.display = 'none';
+        }
+
 
     </script>
 
