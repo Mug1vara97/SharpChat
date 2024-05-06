@@ -1,11 +1,8 @@
 using Jojo.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jojo.Controllers
@@ -26,6 +23,7 @@ namespace Jojo.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
         public IActionResult ChatList(string username)
         {
             if (string.IsNullOrEmpty(username))
@@ -42,8 +40,6 @@ namespace Jojo.Controllers
 
             return View();
         }
-
-
 
         [HttpGet]
         public IActionResult Chat(string username, int chatId, string chatName)
@@ -72,6 +68,7 @@ namespace Jojo.Controllers
 
             return RedirectToAction("ChatList", new { username });
         }
+
 
         [HttpPost]
         public async Task<IActionResult> CreateChat(string chatName, string chatDescription, string username, string addUsersType, string allowedUsers)
@@ -189,12 +186,14 @@ namespace Jojo.Controllers
             }
             return View();
         }
+
         public IActionResult UsersList(string username)
         {
             ViewBag.Username = username;
             var users = _context.Users.OrderBy(u => u.Username).ToList();
             return View(users);
         }
+
         [HttpPost]
         public async Task<IActionResult> AddUserToChat(string username, int chatId, string addedUser)
         {
@@ -208,6 +207,7 @@ namespace Jojo.Controllers
 
             return RedirectToAction("ChatList", new { username });
         }
+
         [HttpPost]
         public async Task<IActionResult> RemoveUserFromChat(string username, int chatId, string removedUser)
         {
@@ -362,6 +362,7 @@ namespace Jojo.Controllers
 
             return RedirectToAction("Profile", new { username = username, profilename = username });
         }
+
         [HttpPost]
         public async Task<IActionResult> AddComment(int newsItemId, string username, string content)
         {
@@ -384,6 +385,7 @@ namespace Jojo.Controllers
 
             return Json(new { success = true });
         }
+
         [HttpPost]
         public async Task<IActionResult> AddFriend(string username, string friendUsername)
         {
@@ -424,6 +426,7 @@ namespace Jojo.Controllers
 
             return RedirectToAction("Profile", new { username = username, profilename = friendUsername });
         }
+
         [HttpPost]
         public async Task<IActionResult> LikeNews(int newsItemId, string username)
         {
@@ -443,6 +446,7 @@ namespace Jojo.Controllers
 
             return Ok();
         }
+
         [HttpPost]
         public async Task<IActionResult> UnlikeNews(int newsItemId, string username)
         {
@@ -456,6 +460,7 @@ namespace Jojo.Controllers
 
             return Ok();
         }
+
         [HttpPost]
         public async Task<IActionResult> SendFriendRequest(string fromUser, string toUser)
         {
@@ -511,5 +516,31 @@ namespace Jojo.Controllers
 
             return NotFound();
         }
+        public IActionResult Snake(string username)
+        {
+            ViewBag.Username = username;
+            var topPlayers = _context.SnakeGameStats.OrderByDescending(s => s.Score).Take(10).ToList(); // ѕолучаем топ 10 игроков по очкам
+
+            var uniquePlayers = topPlayers.GroupBy(p => p.Username).Select(p => p.First()).ToList(); // ѕолучаем только уникальных игроков по имени
+
+            return View(uniquePlayers);
+        }
+
+        [HttpPost]
+        public IActionResult SaveSnakeGameStats([FromBody] SnakeGameStats stats)
+        {
+            try
+            {
+                _context.SnakeGameStats.Add(stats);
+                _context.SaveChanges();
+                return Json(new { success = true, message = "Snake game stats saved successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
     }
 }

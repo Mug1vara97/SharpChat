@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Snake Game</title>
+    <style>
+        #gameCanvas {
+            border: 1px solid black;
+        }
+
+        #gameOver {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border: 1px solid black;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="gameOver">
+        <h1>Game Over!</h1>
+        <div id="stats">
+            <h2>Snake Stats:</h2>
+            <p>Length: <span id="snakeLength"></span></p>
+            <input type="hidden" id="snakeLengthInput" />
+        </div>
+
+        <button onclick="restartGame()">Restart</button>
+    </div>
+
+    <h1>Top Players</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Score</th>
+                <th>Date Played</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in Model)
+            {
+                <tr>
+                    <td>@player.Username</td>
+                    <td>@player.Score</td>
+                    <td>@player.DatePlayed</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gameOver = document.getElementById('gameOver');
+
+        const TILE_SIZE = 20;
+
+        let snake = [
+            { x: 10, y: 10 },
+            { x: 10, y: 11 },
+            { x: 10, y: 12 }
+        ];
+
+        let apple = { x: 15, y: 15 };
+
+
+        let direction = 'up';
+        let gamePaused = false;
+
+
+        function drawSnake() {
+            snake.forEach((segment, index) => {
+                ctx.strokeStyle = 'black'; // Добавляем черную обводку
+                ctx.lineWidth = 2; // Ширина обводки
+
+                if (index === 0) {
+                    // Голова змейки
+                    ctx.fillStyle = 'green';
+                    ctx.fillRect(segment.x * TILE_SIZE, segment.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, 10);
+
+                    // Глаза
+                    ctx.fillStyle = 'black';
+                    ctx.beginPath();
+                    ctx.arc((segment.x * TILE_SIZE) + TILE_SIZE / 3, (segment.y * TILE_SIZE) + TILE_SIZE / 3, TILE_SIZE / 6, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc((segment.x * TILE_SIZE) + (2 * TILE_SIZE / 3), (segment.y * TILE_SIZE) + TILE_SIZE / 3, TILE_SIZE / 6, 0, 2 * Math.PI);
+                    ctx.fill();
+                } else {
+                    // Тело змейки
+                    ctx.fillStyle = 'green';
+                    ctx.fillRect(segment.x * TILE_SIZE, segment.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, 10);
+                }
+
+                // Рисуем обводку для каждого сегмента змейки
+                ctx.strokeRect(segment.x * TILE_SIZE, segment.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            });
+        }
+
+
+
+        function updateStats() {
+            document.getElementById('snakeLength').textContent = snake.length;
+        }
+
+        function updateSnake() {
+            const head = { ...snake[0] };
+            switch (direction) {
+                case 'up':
+                    head.y--;
+                    break;
+                case 'down':
+                    head.y++;
+                    break;
+                case 'left':
+                    head.x--;
+                    break;
+                case 'right':
+                    head.x++;
+                    break;
+            }
+
+            snake.unshift(head);
+            if (head.x !== apple.x || head.y !== apple.y) {
+                snake.pop();
+            } else {
+                generateApple();
+                updateStats();
+            }
+        }
+
+        function gameLoop() {
+            if (checkCollision()) {
+                gameOver.style.display = 'block';
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            updateSnake();
+            drawSnake();
+            drawApple();
+
+            setTimeout(gameLoop, 100);
+        }
+
+
+        function checkCollision() {
+            const head = snake[0];
+            if (head.x < 0 || head.x >= canvas.width / TILE_SIZE ||
+                head.y < 0 || head.y >= canvas.height / TILE_SIZE) {
+                return true;
+            }
+
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    return true;
+                }
+            }
+
+            if (head.x === apple.x && head.y === apple.y) {
+                snake.unshift({ x: head.x, y: head.y });
+                generateApple();
+            }
+
+            return false;
+        }
+
+        function generateApple() {
+            apple.x = Math.floor(Math.random() * (canvas.width / TILE_SIZE));
+            apple.y = Math.floor(Math.random() * (canvas.height / TILE_SIZE));
+        }
+
+
+        function restartGame() {
+            let username = '@ViewBag.Username';
+
+            let data = { username: username, score: snake.length, datePlayed: new Date() };
+
+            fetch('/Home/SaveSnakeGameStats', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .then(data => {
+                    console.log('Snake game stats saved successfully:', data);
+                })
+                .catch(error => {
+                    console.error('There was a problem saving the snake game stats:', error);
+                });
+
+            snake = [{ x: 10, y: 10 }, { x: 10, y: 11 }, { x: 10, y: 12 }];
+            direction = 'up';
+            gameOver.style.display = 'none';
+
+            generateApple();
+            updateStats();
+            gameLoop();
+        }
+
+
+
+        document.addEventListener('keydown', (event) => {
+            switch (event.key) {
+                case 'ArrowUp':
+                case 'w':
+                    if (direction !== 'down') direction = 'up';
+                    break;
+                case 'ArrowDown':
+                case 's':
+                    if (direction !== 'up') direction = 'down';
+                    break;
+                case 'ArrowLeft':
+                case 'a':
+                    if (direction !== 'right') direction = 'left';
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                    if (direction !== 'left') direction = 'right';
+                    break;
+            }
+        });
+
+        function drawApple() {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(apple.x * TILE_SIZE, apple.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        }
+
+
+        gameLoop();
+
+    </script>
+</body>
+</html>

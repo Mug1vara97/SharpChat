@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Jojo.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jojo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240506082521_111")]
+    partial class _111
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,7 +211,7 @@ namespace Jojo.Migrations
                     b.ToTable("Likes");
                 });
 
-            modelBuilder.Entity("Jojo.Models.SnakeGameStats", b =>
+            modelBuilder.Entity("Jojo.Models.SnakeStatistic", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -216,19 +219,20 @@ namespace Jojo.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("DatePlayed")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Score")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.ToTable("SnakeGameStats");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SnakeStatistics");
                 });
 
             modelBuilder.Entity("Jojo.Models.User", b =>
@@ -356,9 +360,25 @@ namespace Jojo.Migrations
                     b.Navigation("NewsFeedItem");
                 });
 
+            modelBuilder.Entity("Jojo.Models.SnakeStatistic", b =>
+                {
+                    b.HasOne("Jojo.Models.User", "User")
+                        .WithMany("SnakeStatistics")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Chat", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("Jojo.Models.User", b =>
+                {
+                    b.Navigation("SnakeStatistics");
                 });
 
             modelBuilder.Entity("NewsFeedItem", b =>

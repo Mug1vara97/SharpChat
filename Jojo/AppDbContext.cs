@@ -17,7 +17,7 @@ namespace Jojo.Models
         public DbSet<ChatPhoto> ChatPhotos { get; set; }
         public DbSet<Like> Likes { get; set; }
         public DbSet<FriendshipRequest> FriendshipRequests { get; set; }
-
+        public DbSet<SnakeGameStats> SnakeGameStats { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Friendship>()

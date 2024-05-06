@@ -134,6 +134,53 @@
             float: right;
         }
 
+        .dark-mode body {
+            background-color: #333;
+        }
+
+        .dark-mode h2 {
+            color: #fff;
+        }
+
+        .dark-mode p {
+            color: #ccc;
+        }
+
+        .dark-mode ul {
+            border-color: #555;
+        }
+
+        .dark-mode li {
+            background-color: #555;
+            border-color: #999;
+            color: #fff;
+        }
+
+        .dark-mode h3 {
+            color: #fff;
+        }
+
+        .dark-mode small {
+            color: #ccc;
+        }
+
+        .dark-mode button {
+            color: #fff;
+            background-color: #333;
+        }
+
+            .dark-mode button:hover {
+                background-color: #555;
+            }
+
+        .dark-mode .content {
+            color: #ccc;
+        }
+
+        .dark-mode .photo {
+            border: 1px solid #ccc;
+        }
+
     </style>
     <link rel="stylesheet" href="~/css/theme.css">
 </head>
@@ -147,7 +194,7 @@
         <input class="search" type="text" id="searchInput" placeholder="Поиск новостей..." oninput="searchNews()" />
     </div>
 
-    <p style="margin-top: 80px;">Welcome, @ViewBag.Username!</p>
+    <p style="margin-top: 60px;"></p>
 
     @if (Model != null)
     {

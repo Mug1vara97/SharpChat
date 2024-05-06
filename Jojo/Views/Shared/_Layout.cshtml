@@ -20,7 +20,6 @@
         .sidebar {
             width: 200px;
             height: calc( 100vh - 80px);
-            background-color: #0056b3;
             margin-top: 80px;
         }
 
@@ -29,22 +28,55 @@
             padding-left: 10px;
         }
 
-        button {
-            margin: 10px;
-            padding: 5px 10px;
-            background-color: #55b2d8;
-            border: none;
-            color: white;
-            cursor: pointer;
-        }
 
-            button:hover {
-                background-color: #0077b7;
-            }
+
 
         .name {
             margin-left: 30px;
         }
+
+        .button-container {
+            display: flex;
+            align-items: center;
+            width: 180px;
+            height: 50px;
+            justify-content: flex-start;
+        }
+
+        #usersListBtn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+             img {
+                margin-right: 10px;
+            }
+
+        form button {
+            background-color: var(--button-color);
+            color: black;
+            border: none;
+        }
+
+        form button {
+            background-color: transparent;
+            outline: none;
+        }
+
+            form button:hover {
+                background-color: transparent;
+            }
+
+        .dark-mode form button {
+            color: white;
+            background-color: #333;
+        }
+
+            .dark-mode form button:hover {
+                background-color: #333;
+            }
+
 
 
     </style>
@@ -55,30 +87,49 @@
 
             <button id="changeThemeBtn">Сменить тему</button>
 
-            <form action="UsersList" method="get">
-                <input type="hidden" name="username" value="@ViewBag.Username" />
-                    <button type="submit" id="usersListBtn">
-                        Список пользователей
-                    </button>
+            <form action="UsersList" method="get"> 
+                <input type="hidden" name="username" value="@ViewBag.Username" /> 
+                <button type="submit" id="usersListBtn">
+                    <div class="button-container">
+                        <img src="~/css/test.png" alt="User Icon" /> Пользователели
+                        </div> 
+                </button> 
             </form>
 
             <form action="ChatList" method="get">
                 <input type="hidden" name="username" value="@ViewBag.Username" />
-                    <button type="submit" id="chatListBtn">
-                        Список чатов
-                    </button>
+                <button type="submit" id="chatListBtn">
+                    <div class="button-container">
+                        <img src="~/css/chat.png" alt="Chat Icon" /> Список чатов
+                    </div>
+                </button>
             </form>
+
 
             <form action="NewsFeed" method="get">
                 <input type="hidden" name="username" value="@ViewBag.Username" />
                     <button type="submit" id="newsFeedBtn">
-                        Новостная лента
+                    <div class="button-container">
+                    <img src="~/css/neews.png" alt="User Icon"> Новостная лента
+                    </div>
                     </button>
             </form>
 
+            <form action="Snake" method="get">
+                <input type="hidden" name="username" value="@ViewBag.Username" />
+                <button type="submit" id="snakeBtn">
+                    <div class="button-container">
+                    <img src="~/css/play.png" alt="User Icon" /> Змейка
+                    </div>
+                </button>
+            </form>
+
+
             <form action="Login" method="get">
                 <button type="submit" id="logoutBtn">
-                    Разлогиниться
+                    <div class="button-container">
+                    <img src="~/css/Logout.png" alt="User Icon" /> Разлогиниться
+                    </div>
                 </button>
             </form>
 
@@ -90,8 +141,23 @@
     <script src="~/js/theme.js"></script>
     <script>
         document.getElementById('changeThemeBtn').addEventListener('click', function () {
-            document.body.classList.toggle('dark-mode');
+            toggleDarkMode();
         });
+
+        function toggleDarkMode() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            const isDarkMode = body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const theme = localStorage.getItem('theme');
+            if (theme && theme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
 
     </script>
 </body>
