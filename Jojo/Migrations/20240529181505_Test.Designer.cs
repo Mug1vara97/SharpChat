@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jojo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240506082244_11")]
-    partial class _11
+    [Migration("20240529181505_Test")]
+    partial class Test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -211,7 +211,7 @@ namespace Jojo.Migrations
                     b.ToTable("Likes");
                 });
 
-            modelBuilder.Entity("Jojo.Models.SnakeStatistic", b =>
+            modelBuilder.Entity("Jojo.Models.SnakeGameStats", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -219,20 +219,19 @@ namespace Jojo.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("DatePlayed")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Score")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SnakeStatistics");
+                    b.ToTable("SnakeGameStats");
                 });
 
             modelBuilder.Entity("Jojo.Models.User", b =>
@@ -329,13 +328,11 @@ namespace Jojo.Migrations
 
             modelBuilder.Entity("Jojo.Models.ChatMessage", b =>
                 {
-                    b.HasOne("Chat", "Chat")
+                    b.HasOne("Chat", null)
                         .WithMany("Messages")
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Chat");
                 });
 
             modelBuilder.Entity("Jojo.Models.ChatPhoto", b =>
@@ -360,25 +357,9 @@ namespace Jojo.Migrations
                     b.Navigation("NewsFeedItem");
                 });
 
-            modelBuilder.Entity("Jojo.Models.SnakeStatistic", b =>
-                {
-                    b.HasOne("Jojo.Models.User", "User")
-                        .WithMany("SnakeStatistics")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Chat", b =>
                 {
                     b.Navigation("Messages");
-                });
-
-            modelBuilder.Entity("Jojo.Models.User", b =>
-                {
-                    b.Navigation("SnakeStatistics");
                 });
 
             modelBuilder.Entity("NewsFeedItem", b =>

@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jojo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240506100302_1111111")]
-    partial class _1111111
+    [Migration("20240510114231_ZXC")]
+    partial class ZXC
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -328,13 +328,11 @@ namespace Jojo.Migrations
 
             modelBuilder.Entity("Jojo.Models.ChatMessage", b =>
                 {
-                    b.HasOne("Chat", "Chat")
+                    b.HasOne("Chat", null)
                         .WithMany("Messages")
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Chat");
                 });
 
             modelBuilder.Entity("Jojo.Models.ChatPhoto", b =>

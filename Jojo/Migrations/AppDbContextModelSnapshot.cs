@@ -325,13 +325,11 @@ namespace Jojo.Migrations
 
             modelBuilder.Entity("Jojo.Models.ChatMessage", b =>
                 {
-                    b.HasOne("Chat", "Chat")
+                    b.HasOne("Chat", null)
                         .WithMany("Messages")
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Chat");
                 });
 
             modelBuilder.Entity("Jojo.Models.ChatPhoto", b =>

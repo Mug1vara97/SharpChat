@@ -19,10 +19,97 @@
             border: 1px solid black;
             z-index: 1;
         }
+
+        .search-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #0056b3;
+            align-items: center;
+            z-index: 9999;
+            display: flex;
+        }
+
+        .search {
+            margin-left: 20px;
+            height: 15px;
+            width: 80%;
+        }
+
+
+        .dark-mode ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 80px;
+        }
+
+        .dark-mode li {
+            padding: 10px;
+            border-bottom: 1px solid #555;
+        }
+
+        .dark-mode button {
+            background-color: #555;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+            .dark-mode button:hover {
+                background-color: #777;
+            }
+
+        .dark-mode a {
+            color: #007bff;
+        }
+
+            .dark-mode a:hover {
+                text-decoration: underline;
+            }
+
+        .dark-mode .search-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            align-items: center;
+            z-index: 9999;
+            display: flex;
+            background-color: #555;
+        }
+
+        .dark-mode .search {
+            margin-left: 20px;
+            height: 15px;
+            width: 80%;
+        }
+
+
+        .game {
+            margin-top: 100px;
+            float: left;
+        }
+
+        .test {
+            margin-left: 1000px;
+            margin-right: 30px;
+            margin-top: 100px;
+
+        }
+
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div class="search-container">
+        <h4 class="name">@ViewBag.Username</h4>
+        <div style="width: 26px; height: 26px; margin-left: 120px;"></div>
+        <input class="search" type="text" id="searchInput" placeholder="Поиск по пользователям..." />
+    </div>
+
+    <canvas id="gameCanvas" width="800" height="600" class="game"></canvas>
     <div id="gameOver">
         <h1>Game Over!</h1>
         <div id="stats">
@@ -33,7 +120,7 @@
 
         <button onclick="restartGame()">Restart</button>
     </div>
-
+    <div class="test">
     <h1>Top Players</h1>
 
     <table>
@@ -55,8 +142,9 @@
             }
         </tbody>
     </table>
+    </div>
 
-
+    <script src="~/js/theme.js"></script>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -79,8 +167,8 @@
 
         function drawSnake() {
             snake.forEach((segment, index) => {
-                ctx.strokeStyle = 'black'; // Добавляем черную обводку
-                ctx.lineWidth = 2; // Ширина обводки
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 2;
 
                 if (index === 0) {
                     // Голова змейки

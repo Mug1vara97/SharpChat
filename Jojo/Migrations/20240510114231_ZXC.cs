@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jojo.Migrations
 {
     /// <inheritdoc />
-    public partial class _1 : Migration
+    public partial class ZXC : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -77,18 +77,18 @@ namespace Jojo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SnakeStatistics",
+                name: "SnakeGameStats",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: false),
                     Score = table.Column<int>(type: "integer", nullable: false),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    DatePlayed = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SnakeStatistics", x => x.Id);
+                    table.PrimaryKey("PK_SnakeGameStats", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -248,7 +248,7 @@ namespace Jojo.Migrations
                 name: "Likes");
 
             migrationBuilder.DropTable(
-                name: "SnakeStatistics");
+                name: "SnakeGameStats");
 
             migrationBuilder.DropTable(
                 name: "Users");
